@@ -20,7 +20,7 @@ Rust bindings for Dear ImGui 1.66b. Experimental personal project, created due t
 1. Safe part is currently very limited. Only functions that are considered safe are being wrapped. E.g. ones which don't contain function pointers or `void*` or things like that.
 1. `const char*` arguments become `&CStr`, there is also custom `cstr!` macro to help building those at compile-time. `const char*` return values are converted into `String`. Other types are propagated as-is, `*mut` becomes `&mut`, `*const` becomes `&`.
 1. "Format" portion of the function arguments that normally consists of a format string and arguments is converted to a single string argument. Which is then passed in as `"%s"`.
-1. Custom `cstr!` macro supports formatting, e.g. `cstr!("{}", myint)`.
+1. Custom `cstr!` macro supports formatting, e.g. `cstr!("{}", myint)`. This variant uses `format!` macro underneath, which allocates a String.
 1. All imgui functions are methods of `ImGui` struct. You can create one with `ImGui::new()`. Only one instance of this struct is allowed (protected via static mutex). Although the struct is Clone, Rc inside. `ImGui::new()` function will call `igCreateContext()`. When last `ImGui` instance is dropped, it will call `igDestroyContext(igGetCurrentContext())`.
 1. Original library uses C types, such as int, unsigned int, float, double, size_t. I assume those are i32, u32, f32, f64, usize and so on. Basically implying they have fixed sizes. While it's not true in theory, in many cases it's true in practice. It will work for typical 64 bit desktop setups, it might not work for some esoteric embedded scenarios in case if you want to use imgui there.
 
@@ -32,6 +32,4 @@ A: There are none. The goal for this lib is to stay as close as possible to C++ 
 
 Q: Do you plan to maintain this library?
 
-A: It depends. Currently I'm using it in my personal hobby gamedevy project. As long as keep working on it, this library probably will be maintained to some degree. Then - who knows. Don't expect it to be well maintained.
-
-
+A: It depends. Currently I'm using it in my personal hobby gamedevy project. As long as I keep working on it, this library probably will be maintained to some degree. Then - who knows. Don't expect it to be well maintained.
