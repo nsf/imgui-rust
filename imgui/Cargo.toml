@@ -1,8 +1,14 @@
 [package]
 name = "nsf-imgui"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["nsf <no.smile.face@gmail.com>"]
 edition = "2018"
+description = "Alternative (personal) imgui rust bindings"
+repository = "https://github.com/nsf/imgui-rust"
+categories = ["gui", "api-bindings"]
+license = "MIT"
+maintenance = { status = "experimental" }
+keywords = ["imgui"]
 
 [profile.release]
 lto = true
@@ -15,5 +21,5 @@ opt-level = 2
 path = "imgui.rs"
 
 [dependencies]
-nsf-imgui-raw = { path = "../imgui-raw", version = "0.0.1" }
+nsf-imgui-raw = { path = "../imgui-raw", version = "0.1.0" }
 lazy_static = "1.2.0"

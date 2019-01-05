@@ -1,8 +1,14 @@
 [package]
 name = "nsf-imgui-raw"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["nsf <no.smile.face@gmail.com>"]
 edition = "2018"
+description = "Alternative (personal) imgui rust bindings, unsafe ffi part"
+repository = "https://github.com/nsf/imgui-rust"
+categories = ["gui", "external-ffi-bindings"]
+license = "MIT"
+maintenance = { status = "experimental" }
+keywords = ["imgui"]
 
 [profile.release]
 lto = true
