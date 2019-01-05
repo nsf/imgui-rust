@@ -4,104 +4,289 @@ use std::ffi::CStr;
 impl ImGui {
     // pub fn accept_drag_drop_payload : (*const c_char, ImGuiDragDropFlags) -> *const ImGuiPayload
     #[inline]
-    pub fn align_text_to_frame_padding(&self) {
+    pub fn align_text_to_frame_padding<'a>(&'a self) {
         unsafe { igAlignTextToFramePadding() };
     }
     #[inline]
-    pub fn arrow_button(&self, str_id: &CStr, dir: ImGuiDir) -> bool {
+    pub fn arrow_button<'a, 'b>(&'a self, str_id: &'b CStr, dir: ImGuiDir) -> bool {
         unsafe { igArrowButton(str_id.as_ptr(), dir) }
     }
     #[inline]
-    pub fn begin(&self, name: &CStr, p_open: &mut bool, flags: ImGuiWindowFlags) -> bool {
-        unsafe { igBegin(name.as_ptr(), p_open, flags) }
+    pub fn begin<'a, 'b, 'c>(
+        &'a self,
+        name: &'b CStr,
+        p_open: impl Into<Option<&'c mut bool>>,
+        flags: impl Into<Option<ImGuiWindowFlags>>,
+    ) -> bool {
+        unsafe {
+            igBegin(
+                name.as_ptr(),
+                match p_open.into() {
+                    Some(v) => v,
+                    None => ::std::ptr::null_mut(),
+                },
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiWindowFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_child(&self, str_id: &CStr, size: ImVec2, border: bool, flags: ImGuiWindowFlags) -> bool {
-        unsafe { igBeginChild(str_id.as_ptr(), size, border, flags) }
+    pub fn begin_child<'a, 'b>(
+        &'a self,
+        str_id: &'b CStr,
+        size: impl Into<Option<ImVec2>>,
+        border: impl Into<Option<bool>>,
+        flags: impl Into<Option<ImGuiWindowFlags>>,
+    ) -> bool {
+        unsafe {
+            igBeginChild(
+                str_id.as_ptr(),
+                match size.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+                match border.into() {
+                    Some(v) => v,
+                    None => false,
+                },
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiWindowFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_child_id(&self, id: ImGuiID, size: ImVec2, border: bool, flags: ImGuiWindowFlags) -> bool {
-        unsafe { igBeginChildID(id, size, border, flags) }
+    pub fn begin_child_id<'a>(
+        &'a self,
+        id: ImGuiID,
+        size: impl Into<Option<ImVec2>>,
+        border: impl Into<Option<bool>>,
+        flags: impl Into<Option<ImGuiWindowFlags>>,
+    ) -> bool {
+        unsafe {
+            igBeginChildID(
+                id,
+                match size.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+                match border.into() {
+                    Some(v) => v,
+                    None => false,
+                },
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiWindowFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_child_frame(&self, id: ImGuiID, size: ImVec2, flags: ImGuiWindowFlags) -> bool {
-        unsafe { igBeginChildFrame(id, size, flags) }
+    pub fn begin_child_frame<'a>(
+        &'a self,
+        id: ImGuiID,
+        size: ImVec2,
+        flags: impl Into<Option<ImGuiWindowFlags>>,
+    ) -> bool {
+        unsafe {
+            igBeginChildFrame(
+                id,
+                size,
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiWindowFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_combo(&self, label: &CStr, preview_value: &CStr, flags: ImGuiComboFlags) -> bool {
-        unsafe { igBeginCombo(label.as_ptr(), preview_value.as_ptr(), flags) }
+    pub fn begin_combo<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        preview_value: &'c CStr,
+        flags: impl Into<Option<ImGuiComboFlags>>,
+    ) -> bool {
+        unsafe {
+            igBeginCombo(
+                label.as_ptr(),
+                preview_value.as_ptr(),
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiComboFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_drag_drop_source(&self, flags: ImGuiDragDropFlags) -> bool {
-        unsafe { igBeginDragDropSource(flags) }
+    pub fn begin_drag_drop_source<'a>(&'a self, flags: impl Into<Option<ImGuiDragDropFlags>>) -> bool {
+        unsafe {
+            igBeginDragDropSource(match flags.into() {
+                Some(v) => v,
+                None => ImGuiDragDropFlags::empty(),
+            })
+        }
     }
     #[inline]
-    pub fn begin_drag_drop_target(&self) -> bool {
+    pub fn begin_drag_drop_target<'a>(&'a self) -> bool {
         unsafe { igBeginDragDropTarget() }
     }
     #[inline]
-    pub fn begin_group(&self) {
+    pub fn begin_group<'a>(&'a self) {
         unsafe { igBeginGroup() };
     }
     #[inline]
-    pub fn begin_main_menu_bar(&self) -> bool {
+    pub fn begin_main_menu_bar<'a>(&'a self) -> bool {
         unsafe { igBeginMainMenuBar() }
     }
     #[inline]
-    pub fn begin_menu(&self, label: &CStr, enabled: bool) -> bool {
-        unsafe { igBeginMenu(label.as_ptr(), enabled) }
+    pub fn begin_menu<'a, 'b>(&'a self, label: &'b CStr, enabled: impl Into<Option<bool>>) -> bool {
+        unsafe {
+            igBeginMenu(
+                label.as_ptr(),
+                match enabled.into() {
+                    Some(v) => v,
+                    None => true,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_menu_bar(&self) -> bool {
+    pub fn begin_menu_bar<'a>(&'a self) -> bool {
         unsafe { igBeginMenuBar() }
     }
     #[inline]
-    pub fn begin_popup(&self, str_id: &CStr, flags: ImGuiWindowFlags) -> bool {
-        unsafe { igBeginPopup(str_id.as_ptr(), flags) }
+    pub fn begin_popup<'a, 'b>(&'a self, str_id: &'b CStr, flags: impl Into<Option<ImGuiWindowFlags>>) -> bool {
+        unsafe {
+            igBeginPopup(
+                str_id.as_ptr(),
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiWindowFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_popup_context_item(&self, str_id: &CStr, mouse_button: i32) -> bool {
-        unsafe { igBeginPopupContextItem(str_id.as_ptr(), mouse_button) }
+    pub fn begin_popup_context_item<'a, 'b>(
+        &'a self,
+        str_id: impl Into<Option<&'b CStr>>,
+        mouse_button: impl Into<Option<i32>>,
+    ) -> bool {
+        unsafe {
+            igBeginPopupContextItem(
+                match str_id.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+                match mouse_button.into() {
+                    Some(v) => v,
+                    None => 1,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_popup_context_void(&self, str_id: &CStr, mouse_button: i32) -> bool {
-        unsafe { igBeginPopupContextVoid(str_id.as_ptr(), mouse_button) }
+    pub fn begin_popup_context_void<'a, 'b>(
+        &'a self,
+        str_id: impl Into<Option<&'b CStr>>,
+        mouse_button: impl Into<Option<i32>>,
+    ) -> bool {
+        unsafe {
+            igBeginPopupContextVoid(
+                match str_id.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+                match mouse_button.into() {
+                    Some(v) => v,
+                    None => 1,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_popup_context_window(&self, str_id: &CStr, mouse_button: i32, also_over_items: bool) -> bool {
-        unsafe { igBeginPopupContextWindow(str_id.as_ptr(), mouse_button, also_over_items) }
+    pub fn begin_popup_context_window<'a, 'b>(
+        &'a self,
+        str_id: impl Into<Option<&'b CStr>>,
+        mouse_button: impl Into<Option<i32>>,
+        also_over_items: impl Into<Option<bool>>,
+    ) -> bool {
+        unsafe {
+            igBeginPopupContextWindow(
+                match str_id.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+                match mouse_button.into() {
+                    Some(v) => v,
+                    None => 1,
+                },
+                match also_over_items.into() {
+                    Some(v) => v,
+                    None => true,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_popup_modal(&self, name: &CStr, p_open: &mut bool, flags: ImGuiWindowFlags) -> bool {
-        unsafe { igBeginPopupModal(name.as_ptr(), p_open, flags) }
+    pub fn begin_popup_modal<'a, 'b, 'c>(
+        &'a self,
+        name: &'b CStr,
+        p_open: impl Into<Option<&'c mut bool>>,
+        flags: impl Into<Option<ImGuiWindowFlags>>,
+    ) -> bool {
+        unsafe {
+            igBeginPopupModal(
+                name.as_ptr(),
+                match p_open.into() {
+                    Some(v) => v,
+                    None => ::std::ptr::null_mut(),
+                },
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiWindowFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn begin_tooltip(&self) {
+    pub fn begin_tooltip<'a>(&'a self) {
         unsafe { igBeginTooltip() };
     }
     #[inline]
-    pub fn bullet(&self) {
+    pub fn bullet<'a>(&'a self) {
         unsafe { igBullet() };
     }
     #[inline]
-    pub fn bullet_text(&self, fmtstr: &CStr) {
-        unsafe { igBulletText(cstr_ptr!("%s"), fmtstr.as_ptr()) };
+    pub fn bullet_text<'a, 'b>(&'a self, fmt: &'b CStr) {
+        unsafe { igBulletText(cstr_ptr!("%s"), fmt.as_ptr()) };
     }
     #[inline]
-    pub fn button(&self, label: &CStr, size: ImVec2) -> bool {
-        unsafe { igButton(label.as_ptr(), size) }
+    pub fn button<'a, 'b>(&'a self, label: &'b CStr, size: impl Into<Option<ImVec2>>) -> bool {
+        unsafe {
+            igButton(
+                label.as_ptr(),
+                match size.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+            )
+        }
     }
     #[inline]
-    pub fn calc_item_width(&self) -> f32 {
+    pub fn calc_item_width<'a>(&'a self) -> f32 {
         unsafe { igCalcItemWidth() }
     }
     #[inline]
-    pub fn calc_list_clipping(
-        &self,
+    pub fn calc_list_clipping<'a, 'b, 'c>(
+        &'a self,
         items_count: i32,
         items_height: f32,
-        out_items_display_start: &mut i32,
-        out_items_display_end: &mut i32,
+        out_items_display_start: &'b mut i32,
+        out_items_display_end: &'c mut i32,
     ) {
         unsafe {
             igCalcListClipping(
@@ -113,113 +298,273 @@ impl ImGui {
         };
     }
     #[inline]
-    pub fn calc_text_size(
-        &self,
-        text: &CStr,
-        text_end: &CStr,
-        hide_text_after_double_hash: bool,
-        wrap_width: f32,
+    pub fn calc_text_size<'a, 'b, 'c>(
+        &'a self,
+        text: &'b CStr,
+        text_end: impl Into<Option<&'c CStr>>,
+        hide_text_after_double_hash: impl Into<Option<bool>>,
+        wrap_width: impl Into<Option<f32>>,
     ) -> ImVec2 {
         unsafe {
             igCalcTextSize(
                 text.as_ptr(),
-                text_end.as_ptr(),
-                hide_text_after_double_hash,
-                wrap_width,
+                match text_end.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+                match hide_text_after_double_hash.into() {
+                    Some(v) => v,
+                    None => false,
+                },
+                match wrap_width.into() {
+                    Some(v) => v,
+                    None => -1.0,
+                },
             )
         }
     }
     #[inline]
-    pub fn capture_keyboard_from_app(&self, capture: bool) {
-        unsafe { igCaptureKeyboardFromApp(capture) };
+    pub fn capture_keyboard_from_app<'a>(&'a self, capture: impl Into<Option<bool>>) {
+        unsafe {
+            igCaptureKeyboardFromApp(match capture.into() {
+                Some(v) => v,
+                None => true,
+            })
+        };
     }
     #[inline]
-    pub fn capture_mouse_from_app(&self, capture: bool) {
-        unsafe { igCaptureMouseFromApp(capture) };
+    pub fn capture_mouse_from_app<'a>(&'a self, capture: impl Into<Option<bool>>) {
+        unsafe {
+            igCaptureMouseFromApp(match capture.into() {
+                Some(v) => v,
+                None => true,
+            })
+        };
     }
     #[inline]
-    pub fn checkbox(&self, label: &CStr, v: &mut bool) -> bool {
+    pub fn checkbox<'a, 'b, 'c>(&'a self, label: &'b CStr, v: &'c mut bool) -> bool {
         unsafe { igCheckbox(label.as_ptr(), v) }
     }
     #[inline]
-    pub fn checkbox_flags(&self, label: &CStr, flags: &mut u32, flags_value: u32) -> bool {
+    pub fn checkbox_flags<'a, 'b, 'c>(&'a self, label: &'b CStr, flags: &'c mut u32, flags_value: u32) -> bool {
         unsafe { igCheckboxFlags(label.as_ptr(), flags, flags_value) }
     }
     #[inline]
-    pub fn close_current_popup(&self) {
+    pub fn close_current_popup<'a>(&'a self) {
         unsafe { igCloseCurrentPopup() };
     }
     #[inline]
-    pub fn collapsing_header(&self, label: &CStr, flags: ImGuiTreeNodeFlags) -> bool {
-        unsafe { igCollapsingHeader(label.as_ptr(), flags) }
+    pub fn collapsing_header<'a, 'b>(&'a self, label: &'b CStr, flags: impl Into<Option<ImGuiTreeNodeFlags>>) -> bool {
+        unsafe {
+            igCollapsingHeader(
+                label.as_ptr(),
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiTreeNodeFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn collapsing_header_bool_ptr(&self, label: &CStr, p_open: &mut bool, flags: ImGuiTreeNodeFlags) -> bool {
-        unsafe { igCollapsingHeaderBoolPtr(label.as_ptr(), p_open, flags) }
+    pub fn collapsing_header_bool_ptr<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        p_open: &'c mut bool,
+        flags: impl Into<Option<ImGuiTreeNodeFlags>>,
+    ) -> bool {
+        unsafe {
+            igCollapsingHeaderBoolPtr(
+                label.as_ptr(),
+                p_open,
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiTreeNodeFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn color_button(&self, desc_id: &CStr, col: ImVec4, flags: ImGuiColorEditFlags, size: ImVec2) -> bool {
-        unsafe { igColorButton(desc_id.as_ptr(), col, flags, size) }
+    pub fn color_button<'a, 'b>(
+        &'a self,
+        desc_id: &'b CStr,
+        col: ImVec4,
+        flags: impl Into<Option<ImGuiColorEditFlags>>,
+        size: impl Into<Option<ImVec2>>,
+    ) -> bool {
+        unsafe {
+            igColorButton(
+                desc_id.as_ptr(),
+                col,
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiColorEditFlags::empty(),
+                },
+                match size.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+            )
+        }
     }
     #[inline]
-    pub fn color_convert_float4_to_u32(&self, _in: ImVec4) -> u32 {
+    pub fn color_convert_float4_to_u32<'a>(&'a self, _in: ImVec4) -> u32 {
         unsafe { igColorConvertFloat4ToU32(_in) }
     }
     #[inline]
-    pub fn color_convert_hs_vto_rgb(&self, h: f32, s: f32, v: f32, out_r: &mut f32, out_g: &mut f32, out_b: &mut f32) {
+    pub fn color_convert_hs_vto_rgb<'a, 'b, 'c, 'd>(
+        &'a self,
+        h: f32,
+        s: f32,
+        v: f32,
+        out_r: &'b mut f32,
+        out_g: &'c mut f32,
+        out_b: &'d mut f32,
+    ) {
         unsafe { igColorConvertHSVtoRGB(h, s, v, out_r, out_g, out_b) };
     }
     #[inline]
-    pub fn color_convert_rg_bto_hsv(&self, r: f32, g: f32, b: f32, out_h: &mut f32, out_s: &mut f32, out_v: &mut f32) {
+    pub fn color_convert_rg_bto_hsv<'a, 'b, 'c, 'd>(
+        &'a self,
+        r: f32,
+        g: f32,
+        b: f32,
+        out_h: &'b mut f32,
+        out_s: &'c mut f32,
+        out_v: &'d mut f32,
+    ) {
         unsafe { igColorConvertRGBtoHSV(r, g, b, out_h, out_s, out_v) };
     }
     #[inline]
-    pub fn color_convert_u32_to_float4(&self, _in: u32) -> ImVec4 {
+    pub fn color_convert_u32_to_float4<'a>(&'a self, _in: u32) -> ImVec4 {
         unsafe { igColorConvertU32ToFloat4(_in) }
     }
     #[inline]
-    pub fn color_edit3(&self, label: &CStr, col: &mut [f32; 3], flags: ImGuiColorEditFlags) -> bool {
-        unsafe { igColorEdit3(label.as_ptr(), col, flags) }
+    pub fn color_edit3<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        col: &'c mut [f32; 3],
+        flags: impl Into<Option<ImGuiColorEditFlags>>,
+    ) -> bool {
+        unsafe {
+            igColorEdit3(
+                label.as_ptr(),
+                col,
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiColorEditFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn color_edit4(&self, label: &CStr, col: &mut [f32; 4], flags: ImGuiColorEditFlags) -> bool {
-        unsafe { igColorEdit4(label.as_ptr(), col, flags) }
+    pub fn color_edit4<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        col: &'c mut [f32; 4],
+        flags: impl Into<Option<ImGuiColorEditFlags>>,
+    ) -> bool {
+        unsafe {
+            igColorEdit4(
+                label.as_ptr(),
+                col,
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiColorEditFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn color_picker3(&self, label: &CStr, col: &mut [f32; 3], flags: ImGuiColorEditFlags) -> bool {
-        unsafe { igColorPicker3(label.as_ptr(), col, flags) }
+    pub fn color_picker3<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        col: &'c mut [f32; 3],
+        flags: impl Into<Option<ImGuiColorEditFlags>>,
+    ) -> bool {
+        unsafe {
+            igColorPicker3(
+                label.as_ptr(),
+                col,
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiColorEditFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn color_picker4(&self, label: &CStr, col: &mut [f32; 4], flags: ImGuiColorEditFlags, ref_col: &f32) -> bool {
-        unsafe { igColorPicker4(label.as_ptr(), col, flags, ref_col) }
+    pub fn color_picker4<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        col: &'c mut [f32; 4],
+        flags: impl Into<Option<ImGuiColorEditFlags>>,
+        ref_col: impl Into<Option<&'d f32>>,
+    ) -> bool {
+        unsafe {
+            igColorPicker4(
+                label.as_ptr(),
+                col,
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiColorEditFlags::empty(),
+                },
+                match ref_col.into() {
+                    Some(v) => v,
+                    None => ::std::ptr::null(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn columns(&self, count: i32, id: &CStr, border: bool) {
-        unsafe { igColumns(count, id.as_ptr(), border) };
+    pub fn columns<'a, 'b>(
+        &'a self,
+        count: impl Into<Option<i32>>,
+        id: impl Into<Option<&'b CStr>>,
+        border: impl Into<Option<bool>>,
+    ) {
+        unsafe {
+            igColumns(
+                match count.into() {
+                    Some(v) => v,
+                    None => 1,
+                },
+                match id.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+                match border.into() {
+                    Some(v) => v,
+                    None => true,
+                },
+            )
+        };
     }
     // pub fn combo : (*const c_char, *mut c_int, *const *const c_char, c_int, c_int) -> bool
     #[inline]
-    pub fn combo_str(
-        &self,
-        label: &CStr,
-        current_item: &mut i32,
-        items_separated_by_zeros: &CStr,
-        popup_max_height_in_items: i32,
+    pub fn combo_str<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        current_item: &'c mut i32,
+        items_separated_by_zeros: &'d CStr,
+        popup_max_height_in_items: impl Into<Option<i32>>,
     ) -> bool {
         unsafe {
             igComboStr(
                 label.as_ptr(),
                 current_item,
                 items_separated_by_zeros.as_ptr(),
-                popup_max_height_in_items,
+                match popup_max_height_in_items.into() {
+                    Some(v) => v,
+                    None => -1,
+                },
             )
         }
     }
     // pub fn combo_fn_ptr : (*const c_char, *mut c_int, extern "C" fn(data: *mut c_void, idx: c_int, out_text: *mut *const c_char) -> bool, *mut c_void, c_int, c_int) -> bool
     #[inline]
-    pub fn debug_check_version_and_data_layout(
-        &self,
-        version_str: &CStr,
+    pub fn debug_check_version_and_data_layout<'a, 'b>(
+        &'a self,
+        version_str: &'b CStr,
         sz_io: usize,
         sz_style: usize,
         sz_vec2: usize,
@@ -231,270 +576,513 @@ impl ImGui {
         }
     }
     #[inline]
-    pub fn drag_float(
-        &self,
-        label: &CStr,
-        v: &mut f32,
-        v_speed: f32,
-        v_min: f32,
-        v_max: f32,
-        format: &CStr,
-        power: f32,
+    pub fn drag_float<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut f32,
+        v_speed: impl Into<Option<f32>>,
+        v_min: impl Into<Option<f32>>,
+        v_max: impl Into<Option<f32>>,
+        format: impl Into<Option<&'d CStr>>,
+        power: impl Into<Option<f32>>,
     ) -> bool {
-        unsafe { igDragFloat(label.as_ptr(), v, v_speed, v_min, v_max, format.as_ptr(), power) }
+        unsafe {
+            igDragFloat(
+                label.as_ptr(),
+                v,
+                match v_speed.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+                match v_min.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match v_max.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match power.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn drag_float2(
-        &self,
-        label: &CStr,
-        v: &mut [f32; 2],
-        v_speed: f32,
-        v_min: f32,
-        v_max: f32,
-        format: &CStr,
-        power: f32,
+    pub fn drag_float2<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [f32; 2],
+        v_speed: impl Into<Option<f32>>,
+        v_min: impl Into<Option<f32>>,
+        v_max: impl Into<Option<f32>>,
+        format: impl Into<Option<&'d CStr>>,
+        power: impl Into<Option<f32>>,
     ) -> bool {
-        unsafe { igDragFloat2(label.as_ptr(), v, v_speed, v_min, v_max, format.as_ptr(), power) }
+        unsafe {
+            igDragFloat2(
+                label.as_ptr(),
+                v,
+                match v_speed.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+                match v_min.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match v_max.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match power.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn drag_float3(
-        &self,
-        label: &CStr,
-        v: &mut [f32; 3],
-        v_speed: f32,
-        v_min: f32,
-        v_max: f32,
-        format: &CStr,
-        power: f32,
+    pub fn drag_float3<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [f32; 3],
+        v_speed: impl Into<Option<f32>>,
+        v_min: impl Into<Option<f32>>,
+        v_max: impl Into<Option<f32>>,
+        format: impl Into<Option<&'d CStr>>,
+        power: impl Into<Option<f32>>,
     ) -> bool {
-        unsafe { igDragFloat3(label.as_ptr(), v, v_speed, v_min, v_max, format.as_ptr(), power) }
+        unsafe {
+            igDragFloat3(
+                label.as_ptr(),
+                v,
+                match v_speed.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+                match v_min.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match v_max.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match power.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn drag_float4(
-        &self,
-        label: &CStr,
-        v: &mut [f32; 4],
-        v_speed: f32,
-        v_min: f32,
-        v_max: f32,
-        format: &CStr,
-        power: f32,
+    pub fn drag_float4<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [f32; 4],
+        v_speed: impl Into<Option<f32>>,
+        v_min: impl Into<Option<f32>>,
+        v_max: impl Into<Option<f32>>,
+        format: impl Into<Option<&'d CStr>>,
+        power: impl Into<Option<f32>>,
     ) -> bool {
-        unsafe { igDragFloat4(label.as_ptr(), v, v_speed, v_min, v_max, format.as_ptr(), power) }
+        unsafe {
+            igDragFloat4(
+                label.as_ptr(),
+                v,
+                match v_speed.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+                match v_min.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match v_max.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match power.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn drag_float_range2(
-        &self,
-        label: &CStr,
-        v_current_min: &mut f32,
-        v_current_max: &mut f32,
-        v_speed: f32,
-        v_min: f32,
-        v_max: f32,
-        format: &CStr,
-        format_max: &CStr,
-        power: f32,
+    pub fn drag_float_range2<'a, 'b, 'c, 'd, 'e, 'f>(
+        &'a self,
+        label: &'b CStr,
+        v_current_min: &'c mut f32,
+        v_current_max: &'d mut f32,
+        v_speed: impl Into<Option<f32>>,
+        v_min: impl Into<Option<f32>>,
+        v_max: impl Into<Option<f32>>,
+        format: impl Into<Option<&'e CStr>>,
+        format_max: impl Into<Option<&'f CStr>>,
+        power: impl Into<Option<f32>>,
     ) -> bool {
         unsafe {
             igDragFloatRange2(
                 label.as_ptr(),
                 v_current_min,
                 v_current_max,
-                v_speed,
-                v_min,
-                v_max,
-                format.as_ptr(),
-                format_max.as_ptr(),
-                power,
+                match v_speed.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+                match v_min.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match v_max.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match format_max.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+                match power.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
             )
         }
     }
     #[inline]
-    pub fn drag_int(&self, label: &CStr, v: &mut i32, v_speed: f32, v_min: i32, v_max: i32, format: &CStr) -> bool {
-        unsafe { igDragInt(label.as_ptr(), v, v_speed, v_min, v_max, format.as_ptr()) }
-    }
-    #[inline]
-    pub fn drag_int2(
-        &self,
-        label: &CStr,
-        v: &mut [i32; 2],
-        v_speed: f32,
-        v_min: i32,
-        v_max: i32,
-        format: &CStr,
+    pub fn drag_int<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut i32,
+        v_speed: impl Into<Option<f32>>,
+        v_min: impl Into<Option<i32>>,
+        v_max: impl Into<Option<i32>>,
+        format: impl Into<Option<&'d CStr>>,
     ) -> bool {
-        unsafe { igDragInt2(label.as_ptr(), v, v_speed, v_min, v_max, format.as_ptr()) }
+        unsafe {
+            igDragInt(
+                label.as_ptr(),
+                v,
+                match v_speed.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+                match v_min.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match v_max.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%d"),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn drag_int3(
-        &self,
-        label: &CStr,
-        v: &mut [i32; 3],
-        v_speed: f32,
-        v_min: i32,
-        v_max: i32,
-        format: &CStr,
+    pub fn drag_int2<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [i32; 2],
+        v_speed: impl Into<Option<f32>>,
+        v_min: impl Into<Option<i32>>,
+        v_max: impl Into<Option<i32>>,
+        format: impl Into<Option<&'d CStr>>,
     ) -> bool {
-        unsafe { igDragInt3(label.as_ptr(), v, v_speed, v_min, v_max, format.as_ptr()) }
+        unsafe {
+            igDragInt2(
+                label.as_ptr(),
+                v,
+                match v_speed.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+                match v_min.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match v_max.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%d"),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn drag_int4(
-        &self,
-        label: &CStr,
-        v: &mut [i32; 4],
-        v_speed: f32,
-        v_min: i32,
-        v_max: i32,
-        format: &CStr,
+    pub fn drag_int3<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [i32; 3],
+        v_speed: impl Into<Option<f32>>,
+        v_min: impl Into<Option<i32>>,
+        v_max: impl Into<Option<i32>>,
+        format: impl Into<Option<&'d CStr>>,
     ) -> bool {
-        unsafe { igDragInt4(label.as_ptr(), v, v_speed, v_min, v_max, format.as_ptr()) }
+        unsafe {
+            igDragInt3(
+                label.as_ptr(),
+                v,
+                match v_speed.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+                match v_min.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match v_max.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%d"),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn drag_int_range2(
-        &self,
-        label: &CStr,
-        v_current_min: &mut i32,
-        v_current_max: &mut i32,
-        v_speed: f32,
-        v_min: i32,
-        v_max: i32,
-        format: &CStr,
-        format_max: &CStr,
+    pub fn drag_int4<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [i32; 4],
+        v_speed: impl Into<Option<f32>>,
+        v_min: impl Into<Option<i32>>,
+        v_max: impl Into<Option<i32>>,
+        format: impl Into<Option<&'d CStr>>,
+    ) -> bool {
+        unsafe {
+            igDragInt4(
+                label.as_ptr(),
+                v,
+                match v_speed.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+                match v_min.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match v_max.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%d"),
+                },
+            )
+        }
+    }
+    #[inline]
+    pub fn drag_int_range2<'a, 'b, 'c, 'd, 'e, 'f>(
+        &'a self,
+        label: &'b CStr,
+        v_current_min: &'c mut i32,
+        v_current_max: &'d mut i32,
+        v_speed: impl Into<Option<f32>>,
+        v_min: impl Into<Option<i32>>,
+        v_max: impl Into<Option<i32>>,
+        format: impl Into<Option<&'e CStr>>,
+        format_max: impl Into<Option<&'f CStr>>,
     ) -> bool {
         unsafe {
             igDragIntRange2(
                 label.as_ptr(),
                 v_current_min,
                 v_current_max,
-                v_speed,
-                v_min,
-                v_max,
-                format.as_ptr(),
-                format_max.as_ptr(),
+                match v_speed.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+                match v_min.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match v_max.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%d"),
+                },
+                match format_max.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
             )
         }
     }
     // pub fn drag_scalar : (*const c_char, ImGuiDataType, *mut c_void, c_float, *const c_void, *const c_void, *const c_char, c_float) -> bool
     // pub fn drag_scalar_n : (*const c_char, ImGuiDataType, *mut c_void, c_int, c_float, *const c_void, *const c_void, *const c_char, c_float) -> bool
     #[inline]
-    pub fn dummy(&self, size: ImVec2) {
+    pub fn dummy<'a>(&'a self, size: ImVec2) {
         unsafe { igDummy(size) };
     }
     #[inline]
-    pub fn end(&self) {
+    pub fn end<'a>(&'a self) {
         unsafe { igEnd() };
     }
     #[inline]
-    pub fn end_child(&self) {
+    pub fn end_child<'a>(&'a self) {
         unsafe { igEndChild() };
     }
     #[inline]
-    pub fn end_child_frame(&self) {
+    pub fn end_child_frame<'a>(&'a self) {
         unsafe { igEndChildFrame() };
     }
     #[inline]
-    pub fn end_combo(&self) {
+    pub fn end_combo<'a>(&'a self) {
         unsafe { igEndCombo() };
     }
     #[inline]
-    pub fn end_drag_drop_source(&self) {
+    pub fn end_drag_drop_source<'a>(&'a self) {
         unsafe { igEndDragDropSource() };
     }
     #[inline]
-    pub fn end_drag_drop_target(&self) {
+    pub fn end_drag_drop_target<'a>(&'a self) {
         unsafe { igEndDragDropTarget() };
     }
     #[inline]
-    pub fn end_frame(&self) {
+    pub fn end_frame<'a>(&'a self) {
         unsafe { igEndFrame() };
     }
     #[inline]
-    pub fn end_group(&self) {
+    pub fn end_group<'a>(&'a self) {
         unsafe { igEndGroup() };
     }
     #[inline]
-    pub fn end_main_menu_bar(&self) {
+    pub fn end_main_menu_bar<'a>(&'a self) {
         unsafe { igEndMainMenuBar() };
     }
     #[inline]
-    pub fn end_menu(&self) {
+    pub fn end_menu<'a>(&'a self) {
         unsafe { igEndMenu() };
     }
     #[inline]
-    pub fn end_menu_bar(&self) {
+    pub fn end_menu_bar<'a>(&'a self) {
         unsafe { igEndMenuBar() };
     }
     #[inline]
-    pub fn end_popup(&self) {
+    pub fn end_popup<'a>(&'a self) {
         unsafe { igEndPopup() };
     }
     #[inline]
-    pub fn end_tooltip(&self) {
+    pub fn end_tooltip<'a>(&'a self) {
         unsafe { igEndTooltip() };
     }
     #[inline]
-    pub fn get_clipboard_text(&self) -> String {
+    pub fn get_clipboard_text<'a>(&'a self) -> String {
         unsafe { CStr::from_ptr(igGetClipboardText()).to_string_lossy().into_owned() }
     }
     #[inline]
-    pub fn get_color_u32(&self, idx: ImGuiCol, alpha_mul: f32) -> u32 {
-        unsafe { igGetColorU32(idx, alpha_mul) }
+    pub fn get_color_u32<'a>(&'a self, idx: ImGuiCol, alpha_mul: impl Into<Option<f32>>) -> u32 {
+        unsafe {
+            igGetColorU32(
+                idx,
+                match alpha_mul.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn get_color_u32_vec4(&self, col: ImVec4) -> u32 {
+    pub fn get_color_u32_vec4<'a>(&'a self, col: ImVec4) -> u32 {
         unsafe { igGetColorU32Vec4(col) }
     }
     #[inline]
-    pub fn get_color_u32_u32(&self, col: u32) -> u32 {
+    pub fn get_color_u32_u32<'a>(&'a self, col: u32) -> u32 {
         unsafe { igGetColorU32U32(col) }
     }
     #[inline]
-    pub fn get_column_index(&self) -> i32 {
+    pub fn get_column_index<'a>(&'a self) -> i32 {
         unsafe { igGetColumnIndex() }
     }
     #[inline]
-    pub fn get_column_offset(&self, column_index: i32) -> f32 {
-        unsafe { igGetColumnOffset(column_index) }
+    pub fn get_column_offset<'a>(&'a self, column_index: impl Into<Option<i32>>) -> f32 {
+        unsafe {
+            igGetColumnOffset(match column_index.into() {
+                Some(v) => v,
+                None => -1,
+            })
+        }
     }
     #[inline]
-    pub fn get_column_width(&self, column_index: i32) -> f32 {
-        unsafe { igGetColumnWidth(column_index) }
+    pub fn get_column_width<'a>(&'a self, column_index: impl Into<Option<i32>>) -> f32 {
+        unsafe {
+            igGetColumnWidth(match column_index.into() {
+                Some(v) => v,
+                None => -1,
+            })
+        }
     }
     #[inline]
-    pub fn get_columns_count(&self) -> i32 {
+    pub fn get_columns_count<'a>(&'a self) -> i32 {
         unsafe { igGetColumnsCount() }
     }
     #[inline]
-    pub fn get_content_region_avail(&self) -> ImVec2 {
+    pub fn get_content_region_avail<'a>(&'a self) -> ImVec2 {
         unsafe { igGetContentRegionAvail() }
     }
     #[inline]
-    pub fn get_content_region_avail_width(&self) -> f32 {
+    pub fn get_content_region_avail_width<'a>(&'a self) -> f32 {
         unsafe { igGetContentRegionAvailWidth() }
     }
     #[inline]
-    pub fn get_content_region_max(&self) -> ImVec2 {
+    pub fn get_content_region_max<'a>(&'a self) -> ImVec2 {
         unsafe { igGetContentRegionMax() }
     }
     // pub fn get_current_context : () -> *mut ImGuiContext
     #[inline]
-    pub fn get_cursor_pos(&self) -> ImVec2 {
+    pub fn get_cursor_pos<'a>(&'a self) -> ImVec2 {
         unsafe { igGetCursorPos() }
     }
     #[inline]
-    pub fn get_cursor_pos_x(&self) -> f32 {
+    pub fn get_cursor_pos_x<'a>(&'a self) -> f32 {
         unsafe { igGetCursorPosX() }
     }
     #[inline]
-    pub fn get_cursor_pos_y(&self) -> f32 {
+    pub fn get_cursor_pos_y<'a>(&'a self) -> f32 {
         unsafe { igGetCursorPosY() }
     }
     #[inline]
-    pub fn get_cursor_screen_pos(&self) -> ImVec2 {
+    pub fn get_cursor_screen_pos<'a>(&'a self) -> ImVec2 {
         unsafe { igGetCursorScreenPos() }
     }
     #[inline]
-    pub fn get_cursor_start_pos(&self) -> ImVec2 {
+    pub fn get_cursor_start_pos<'a>(&'a self) -> ImVec2 {
         unsafe { igGetCursorStartPos() }
     }
     // pub fn get_drag_drop_payload : () -> *const ImGuiPayload
@@ -502,976 +1090,1856 @@ impl ImGui {
     // pub fn get_draw_list_shared_data : () -> *mut ImDrawListSharedData
     // pub fn get_font : () -> *mut ImFont
     #[inline]
-    pub fn get_font_size(&self) -> f32 {
+    pub fn get_font_size<'a>(&'a self) -> f32 {
         unsafe { igGetFontSize() }
     }
     #[inline]
-    pub fn get_font_tex_uv_white_pixel(&self) -> ImVec2 {
+    pub fn get_font_tex_uv_white_pixel<'a>(&'a self) -> ImVec2 {
         unsafe { igGetFontTexUvWhitePixel() }
     }
     #[inline]
-    pub fn get_frame_count(&self) -> i32 {
+    pub fn get_frame_count<'a>(&'a self) -> i32 {
         unsafe { igGetFrameCount() }
     }
     #[inline]
-    pub fn get_frame_height(&self) -> f32 {
+    pub fn get_frame_height<'a>(&'a self) -> f32 {
         unsafe { igGetFrameHeight() }
     }
     #[inline]
-    pub fn get_frame_height_with_spacing(&self) -> f32 {
+    pub fn get_frame_height_with_spacing<'a>(&'a self) -> f32 {
         unsafe { igGetFrameHeightWithSpacing() }
     }
     #[inline]
-    pub fn get_id_str(&self, str_id: &CStr) -> ImGuiID {
+    pub fn get_id_str<'a, 'b>(&'a self, str_id: &'b CStr) -> ImGuiID {
         unsafe { igGetIDStr(str_id.as_ptr()) }
     }
     #[inline]
-    pub fn get_id_range(&self, str_id_begin: &CStr, str_id_end: &CStr) -> ImGuiID {
+    pub fn get_id_range<'a, 'b, 'c>(&'a self, str_id_begin: &'b CStr, str_id_end: &'c CStr) -> ImGuiID {
         unsafe { igGetIDRange(str_id_begin.as_ptr(), str_id_end.as_ptr()) }
     }
     // pub fn get_id_ptr : (*const c_void) -> ImGuiID
     // pub fn get_io : () -> *mut ImGuiIO
     #[inline]
-    pub fn get_item_rect_max(&self) -> ImVec2 {
+    pub fn get_item_rect_max<'a>(&'a self) -> ImVec2 {
         unsafe { igGetItemRectMax() }
     }
     #[inline]
-    pub fn get_item_rect_min(&self) -> ImVec2 {
+    pub fn get_item_rect_min<'a>(&'a self) -> ImVec2 {
         unsafe { igGetItemRectMin() }
     }
     #[inline]
-    pub fn get_item_rect_size(&self) -> ImVec2 {
+    pub fn get_item_rect_size<'a>(&'a self) -> ImVec2 {
         unsafe { igGetItemRectSize() }
     }
     #[inline]
-    pub fn get_key_index(&self, imgui_key: ImGuiKey) -> i32 {
+    pub fn get_key_index<'a>(&'a self, imgui_key: ImGuiKey) -> i32 {
         unsafe { igGetKeyIndex(imgui_key) }
     }
     #[inline]
-    pub fn get_key_pressed_amount(&self, key_index: i32, repeat_delay: f32, rate: f32) -> i32 {
+    pub fn get_key_pressed_amount<'a>(&'a self, key_index: i32, repeat_delay: f32, rate: f32) -> i32 {
         unsafe { igGetKeyPressedAmount(key_index, repeat_delay, rate) }
     }
     #[inline]
-    pub fn get_mouse_cursor(&self) -> ImGuiMouseCursor {
+    pub fn get_mouse_cursor<'a>(&'a self) -> ImGuiMouseCursor {
         unsafe { igGetMouseCursor() }
     }
     #[inline]
-    pub fn get_mouse_drag_delta(&self, button: i32, lock_threshold: f32) -> ImVec2 {
-        unsafe { igGetMouseDragDelta(button, lock_threshold) }
+    pub fn get_mouse_drag_delta<'a>(
+        &'a self,
+        button: impl Into<Option<i32>>,
+        lock_threshold: impl Into<Option<f32>>,
+    ) -> ImVec2 {
+        unsafe {
+            igGetMouseDragDelta(
+                match button.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match lock_threshold.into() {
+                    Some(v) => v,
+                    None => -1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn get_mouse_pos(&self) -> ImVec2 {
+    pub fn get_mouse_pos<'a>(&'a self) -> ImVec2 {
         unsafe { igGetMousePos() }
     }
     #[inline]
-    pub fn get_mouse_pos_on_opening_current_popup(&self) -> ImVec2 {
+    pub fn get_mouse_pos_on_opening_current_popup<'a>(&'a self) -> ImVec2 {
         unsafe { igGetMousePosOnOpeningCurrentPopup() }
     }
     // pub fn get_overlay_draw_list : () -> *mut ImDrawList
     #[inline]
-    pub fn get_scroll_max_x(&self) -> f32 {
+    pub fn get_scroll_max_x<'a>(&'a self) -> f32 {
         unsafe { igGetScrollMaxX() }
     }
     #[inline]
-    pub fn get_scroll_max_y(&self) -> f32 {
+    pub fn get_scroll_max_y<'a>(&'a self) -> f32 {
         unsafe { igGetScrollMaxY() }
     }
     #[inline]
-    pub fn get_scroll_x(&self) -> f32 {
+    pub fn get_scroll_x<'a>(&'a self) -> f32 {
         unsafe { igGetScrollX() }
     }
     #[inline]
-    pub fn get_scroll_y(&self) -> f32 {
+    pub fn get_scroll_y<'a>(&'a self) -> f32 {
         unsafe { igGetScrollY() }
     }
     // pub fn get_state_storage : () -> *mut ImGuiStorage
     // pub fn get_style : () -> *mut ImGuiStyle
     #[inline]
-    pub fn get_style_color_name(&self, idx: ImGuiCol) -> String {
+    pub fn get_style_color_name<'a>(&'a self, idx: ImGuiCol) -> String {
         unsafe { CStr::from_ptr(igGetStyleColorName(idx)).to_string_lossy().into_owned() }
     }
     // pub fn get_style_color_vec4 : (ImGuiCol) -> *const ImVec4
     #[inline]
-    pub fn get_text_line_height(&self) -> f32 {
+    pub fn get_text_line_height<'a>(&'a self) -> f32 {
         unsafe { igGetTextLineHeight() }
     }
     #[inline]
-    pub fn get_text_line_height_with_spacing(&self) -> f32 {
+    pub fn get_text_line_height_with_spacing<'a>(&'a self) -> f32 {
         unsafe { igGetTextLineHeightWithSpacing() }
     }
     #[inline]
-    pub fn get_time(&self) -> f64 {
+    pub fn get_time<'a>(&'a self) -> f64 {
         unsafe { igGetTime() }
     }
     #[inline]
-    pub fn get_tree_node_to_label_spacing(&self) -> f32 {
+    pub fn get_tree_node_to_label_spacing<'a>(&'a self) -> f32 {
         unsafe { igGetTreeNodeToLabelSpacing() }
     }
     #[inline]
-    pub fn get_version(&self) -> String {
+    pub fn get_version<'a>(&'a self) -> String {
         unsafe { CStr::from_ptr(igGetVersion()).to_string_lossy().into_owned() }
     }
     #[inline]
-    pub fn get_window_content_region_max(&self) -> ImVec2 {
+    pub fn get_window_content_region_max<'a>(&'a self) -> ImVec2 {
         unsafe { igGetWindowContentRegionMax() }
     }
     #[inline]
-    pub fn get_window_content_region_min(&self) -> ImVec2 {
+    pub fn get_window_content_region_min<'a>(&'a self) -> ImVec2 {
         unsafe { igGetWindowContentRegionMin() }
     }
     #[inline]
-    pub fn get_window_content_region_width(&self) -> f32 {
+    pub fn get_window_content_region_width<'a>(&'a self) -> f32 {
         unsafe { igGetWindowContentRegionWidth() }
     }
     // pub fn get_window_draw_list : () -> *mut ImDrawList
     #[inline]
-    pub fn get_window_height(&self) -> f32 {
+    pub fn get_window_height<'a>(&'a self) -> f32 {
         unsafe { igGetWindowHeight() }
     }
     #[inline]
-    pub fn get_window_pos(&self) -> ImVec2 {
+    pub fn get_window_pos<'a>(&'a self) -> ImVec2 {
         unsafe { igGetWindowPos() }
     }
     #[inline]
-    pub fn get_window_size(&self) -> ImVec2 {
+    pub fn get_window_size<'a>(&'a self) -> ImVec2 {
         unsafe { igGetWindowSize() }
     }
     #[inline]
-    pub fn get_window_width(&self) -> f32 {
+    pub fn get_window_width<'a>(&'a self) -> f32 {
         unsafe { igGetWindowWidth() }
     }
     #[inline]
-    pub fn image(
-        &self,
+    pub fn image<'a>(
+        &'a self,
         user_texture_id: ImTextureID,
         size: ImVec2,
-        uv0: ImVec2,
-        uv1: ImVec2,
-        tint_col: ImVec4,
-        border_col: ImVec4,
+        uv0: impl Into<Option<ImVec2>>,
+        uv1: impl Into<Option<ImVec2>>,
+        tint_col: impl Into<Option<ImVec4>>,
+        border_col: impl Into<Option<ImVec4>>,
     ) {
-        unsafe { igImage(user_texture_id, size, uv0, uv1, tint_col, border_col) };
+        unsafe {
+            igImage(
+                user_texture_id,
+                size,
+                match uv0.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+                match uv1.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 1.0, y: 1.0 },
+                },
+                match tint_col.into() {
+                    Some(v) => v,
+                    None => ImVec4 {
+                        x: 1.0,
+                        y: 1.0,
+                        z: 1.0,
+                        w: 1.0,
+                    },
+                },
+                match border_col.into() {
+                    Some(v) => v,
+                    None => ImVec4 {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                },
+            )
+        };
     }
     #[inline]
-    pub fn image_button(
-        &self,
+    pub fn image_button<'a>(
+        &'a self,
         user_texture_id: ImTextureID,
         size: ImVec2,
-        uv0: ImVec2,
-        uv1: ImVec2,
-        frame_padding: i32,
-        bg_col: ImVec4,
-        tint_col: ImVec4,
+        uv0: impl Into<Option<ImVec2>>,
+        uv1: impl Into<Option<ImVec2>>,
+        frame_padding: impl Into<Option<i32>>,
+        bg_col: impl Into<Option<ImVec4>>,
+        tint_col: impl Into<Option<ImVec4>>,
     ) -> bool {
-        unsafe { igImageButton(user_texture_id, size, uv0, uv1, frame_padding, bg_col, tint_col) }
+        unsafe {
+            igImageButton(
+                user_texture_id,
+                size,
+                match uv0.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+                match uv1.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 1.0, y: 1.0 },
+                },
+                match frame_padding.into() {
+                    Some(v) => v,
+                    None => -1,
+                },
+                match bg_col.into() {
+                    Some(v) => v,
+                    None => ImVec4 {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                },
+                match tint_col.into() {
+                    Some(v) => v,
+                    None => ImVec4 {
+                        x: 1.0,
+                        y: 1.0,
+                        z: 1.0,
+                        w: 1.0,
+                    },
+                },
+            )
+        }
     }
     #[inline]
-    pub fn indent(&self, indent_w: f32) {
-        unsafe { igIndent(indent_w) };
+    pub fn indent<'a>(&'a self, indent_w: impl Into<Option<f32>>) {
+        unsafe {
+            igIndent(match indent_w.into() {
+                Some(v) => v,
+                None => 0.0,
+            })
+        };
     }
     #[inline]
-    pub fn input_double(
-        &self,
-        label: &CStr,
-        v: &mut f64,
-        step: f64,
-        step_fast: f64,
-        format: &CStr,
-        extra_flags: ImGuiInputTextFlags,
+    pub fn input_double<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut f64,
+        step: impl Into<Option<f64>>,
+        step_fast: impl Into<Option<f64>>,
+        format: impl Into<Option<&'d CStr>>,
+        extra_flags: impl Into<Option<ImGuiInputTextFlags>>,
     ) -> bool {
-        unsafe { igInputDouble(label.as_ptr(), v, step, step_fast, format.as_ptr(), extra_flags) }
+        unsafe {
+            igInputDouble(
+                label.as_ptr(),
+                v,
+                match step.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match step_fast.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.6f"),
+                },
+                match extra_flags.into() {
+                    Some(v) => v,
+                    None => ImGuiInputTextFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn input_float(
-        &self,
-        label: &CStr,
-        v: &mut f32,
-        step: f32,
-        step_fast: f32,
-        format: &CStr,
-        extra_flags: ImGuiInputTextFlags,
+    pub fn input_float<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut f32,
+        step: impl Into<Option<f32>>,
+        step_fast: impl Into<Option<f32>>,
+        format: impl Into<Option<&'d CStr>>,
+        extra_flags: impl Into<Option<ImGuiInputTextFlags>>,
     ) -> bool {
-        unsafe { igInputFloat(label.as_ptr(), v, step, step_fast, format.as_ptr(), extra_flags) }
+        unsafe {
+            igInputFloat(
+                label.as_ptr(),
+                v,
+                match step.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match step_fast.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match extra_flags.into() {
+                    Some(v) => v,
+                    None => ImGuiInputTextFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn input_float2(
-        &self,
-        label: &CStr,
-        v: &mut [f32; 2],
-        format: &CStr,
-        extra_flags: ImGuiInputTextFlags,
+    pub fn input_float2<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [f32; 2],
+        format: impl Into<Option<&'d CStr>>,
+        extra_flags: impl Into<Option<ImGuiInputTextFlags>>,
     ) -> bool {
-        unsafe { igInputFloat2(label.as_ptr(), v, format.as_ptr(), extra_flags) }
+        unsafe {
+            igInputFloat2(
+                label.as_ptr(),
+                v,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match extra_flags.into() {
+                    Some(v) => v,
+                    None => ImGuiInputTextFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn input_float3(
-        &self,
-        label: &CStr,
-        v: &mut [f32; 3],
-        format: &CStr,
-        extra_flags: ImGuiInputTextFlags,
+    pub fn input_float3<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [f32; 3],
+        format: impl Into<Option<&'d CStr>>,
+        extra_flags: impl Into<Option<ImGuiInputTextFlags>>,
     ) -> bool {
-        unsafe { igInputFloat3(label.as_ptr(), v, format.as_ptr(), extra_flags) }
+        unsafe {
+            igInputFloat3(
+                label.as_ptr(),
+                v,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match extra_flags.into() {
+                    Some(v) => v,
+                    None => ImGuiInputTextFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn input_float4(
-        &self,
-        label: &CStr,
-        v: &mut [f32; 4],
-        format: &CStr,
-        extra_flags: ImGuiInputTextFlags,
+    pub fn input_float4<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [f32; 4],
+        format: impl Into<Option<&'d CStr>>,
+        extra_flags: impl Into<Option<ImGuiInputTextFlags>>,
     ) -> bool {
-        unsafe { igInputFloat4(label.as_ptr(), v, format.as_ptr(), extra_flags) }
+        unsafe {
+            igInputFloat4(
+                label.as_ptr(),
+                v,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match extra_flags.into() {
+                    Some(v) => v,
+                    None => ImGuiInputTextFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn input_int(
-        &self,
-        label: &CStr,
-        v: &mut i32,
-        step: i32,
-        step_fast: i32,
-        extra_flags: ImGuiInputTextFlags,
+    pub fn input_int<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut i32,
+        step: impl Into<Option<i32>>,
+        step_fast: impl Into<Option<i32>>,
+        extra_flags: impl Into<Option<ImGuiInputTextFlags>>,
     ) -> bool {
-        unsafe { igInputInt(label.as_ptr(), v, step, step_fast, extra_flags) }
+        unsafe {
+            igInputInt(
+                label.as_ptr(),
+                v,
+                match step.into() {
+                    Some(v) => v,
+                    None => 1,
+                },
+                match step_fast.into() {
+                    Some(v) => v,
+                    None => 100,
+                },
+                match extra_flags.into() {
+                    Some(v) => v,
+                    None => ImGuiInputTextFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn input_int2(&self, label: &CStr, v: &mut [i32; 2], extra_flags: ImGuiInputTextFlags) -> bool {
-        unsafe { igInputInt2(label.as_ptr(), v, extra_flags) }
+    pub fn input_int2<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [i32; 2],
+        extra_flags: impl Into<Option<ImGuiInputTextFlags>>,
+    ) -> bool {
+        unsafe {
+            igInputInt2(
+                label.as_ptr(),
+                v,
+                match extra_flags.into() {
+                    Some(v) => v,
+                    None => ImGuiInputTextFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn input_int3(&self, label: &CStr, v: &mut [i32; 3], extra_flags: ImGuiInputTextFlags) -> bool {
-        unsafe { igInputInt3(label.as_ptr(), v, extra_flags) }
+    pub fn input_int3<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [i32; 3],
+        extra_flags: impl Into<Option<ImGuiInputTextFlags>>,
+    ) -> bool {
+        unsafe {
+            igInputInt3(
+                label.as_ptr(),
+                v,
+                match extra_flags.into() {
+                    Some(v) => v,
+                    None => ImGuiInputTextFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn input_int4(&self, label: &CStr, v: &mut [i32; 4], extra_flags: ImGuiInputTextFlags) -> bool {
-        unsafe { igInputInt4(label.as_ptr(), v, extra_flags) }
+    pub fn input_int4<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [i32; 4],
+        extra_flags: impl Into<Option<ImGuiInputTextFlags>>,
+    ) -> bool {
+        unsafe {
+            igInputInt4(
+                label.as_ptr(),
+                v,
+                match extra_flags.into() {
+                    Some(v) => v,
+                    None => ImGuiInputTextFlags::empty(),
+                },
+            )
+        }
     }
     // pub fn input_scalar : (*const c_char, ImGuiDataType, *mut c_void, *const c_void, *const c_void, *const c_char, ImGuiInputTextFlags) -> bool
     // pub fn input_scalar_n : (*const c_char, ImGuiDataType, *mut c_void, c_int, *const c_void, *const c_void, *const c_char, ImGuiInputTextFlags) -> bool
     // pub fn input_text : (*const c_char, *mut c_char, size_t, ImGuiInputTextFlags, ImGuiInputTextCallback, *mut c_void) -> bool
     // pub fn input_text_multiline : (*const c_char, *mut c_char, size_t, ImVec2, ImGuiInputTextFlags, ImGuiInputTextCallback, *mut c_void) -> bool
     #[inline]
-    pub fn invisible_button(&self, str_id: &CStr, size: ImVec2) -> bool {
+    pub fn invisible_button<'a, 'b>(&'a self, str_id: &'b CStr, size: ImVec2) -> bool {
         unsafe { igInvisibleButton(str_id.as_ptr(), size) }
     }
     #[inline]
-    pub fn is_any_item_active(&self) -> bool {
+    pub fn is_any_item_active<'a>(&'a self) -> bool {
         unsafe { igIsAnyItemActive() }
     }
     #[inline]
-    pub fn is_any_item_focused(&self) -> bool {
+    pub fn is_any_item_focused<'a>(&'a self) -> bool {
         unsafe { igIsAnyItemFocused() }
     }
     #[inline]
-    pub fn is_any_item_hovered(&self) -> bool {
+    pub fn is_any_item_hovered<'a>(&'a self) -> bool {
         unsafe { igIsAnyItemHovered() }
     }
     #[inline]
-    pub fn is_any_mouse_down(&self) -> bool {
+    pub fn is_any_mouse_down<'a>(&'a self) -> bool {
         unsafe { igIsAnyMouseDown() }
     }
     #[inline]
-    pub fn is_item_active(&self) -> bool {
+    pub fn is_item_active<'a>(&'a self) -> bool {
         unsafe { igIsItemActive() }
     }
     #[inline]
-    pub fn is_item_clicked(&self, mouse_button: i32) -> bool {
-        unsafe { igIsItemClicked(mouse_button) }
+    pub fn is_item_clicked<'a>(&'a self, mouse_button: impl Into<Option<i32>>) -> bool {
+        unsafe {
+            igIsItemClicked(match mouse_button.into() {
+                Some(v) => v,
+                None => 0,
+            })
+        }
     }
     #[inline]
-    pub fn is_item_deactivated(&self) -> bool {
+    pub fn is_item_deactivated<'a>(&'a self) -> bool {
         unsafe { igIsItemDeactivated() }
     }
     #[inline]
-    pub fn is_item_deactivated_after_edit(&self) -> bool {
+    pub fn is_item_deactivated_after_edit<'a>(&'a self) -> bool {
         unsafe { igIsItemDeactivatedAfterEdit() }
     }
     #[inline]
-    pub fn is_item_edited(&self) -> bool {
+    pub fn is_item_edited<'a>(&'a self) -> bool {
         unsafe { igIsItemEdited() }
     }
     #[inline]
-    pub fn is_item_focused(&self) -> bool {
+    pub fn is_item_focused<'a>(&'a self) -> bool {
         unsafe { igIsItemFocused() }
     }
     #[inline]
-    pub fn is_item_hovered(&self, flags: ImGuiHoveredFlags) -> bool {
-        unsafe { igIsItemHovered(flags) }
+    pub fn is_item_hovered<'a>(&'a self, flags: impl Into<Option<ImGuiHoveredFlags>>) -> bool {
+        unsafe {
+            igIsItemHovered(match flags.into() {
+                Some(v) => v,
+                None => ImGuiHoveredFlags::empty(),
+            })
+        }
     }
     #[inline]
-    pub fn is_item_visible(&self) -> bool {
+    pub fn is_item_visible<'a>(&'a self) -> bool {
         unsafe { igIsItemVisible() }
     }
     #[inline]
-    pub fn is_key_down(&self, user_key_index: i32) -> bool {
+    pub fn is_key_down<'a>(&'a self, user_key_index: i32) -> bool {
         unsafe { igIsKeyDown(user_key_index) }
     }
     #[inline]
-    pub fn is_key_pressed(&self, user_key_index: i32, repeat: bool) -> bool {
-        unsafe { igIsKeyPressed(user_key_index, repeat) }
+    pub fn is_key_pressed<'a>(&'a self, user_key_index: i32, repeat: impl Into<Option<bool>>) -> bool {
+        unsafe {
+            igIsKeyPressed(
+                user_key_index,
+                match repeat.into() {
+                    Some(v) => v,
+                    None => true,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn is_key_released(&self, user_key_index: i32) -> bool {
+    pub fn is_key_released<'a>(&'a self, user_key_index: i32) -> bool {
         unsafe { igIsKeyReleased(user_key_index) }
     }
     #[inline]
-    pub fn is_mouse_clicked(&self, button: i32, repeat: bool) -> bool {
-        unsafe { igIsMouseClicked(button, repeat) }
+    pub fn is_mouse_clicked<'a>(&'a self, button: i32, repeat: impl Into<Option<bool>>) -> bool {
+        unsafe {
+            igIsMouseClicked(
+                button,
+                match repeat.into() {
+                    Some(v) => v,
+                    None => false,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn is_mouse_double_clicked(&self, button: i32) -> bool {
+    pub fn is_mouse_double_clicked<'a>(&'a self, button: i32) -> bool {
         unsafe { igIsMouseDoubleClicked(button) }
     }
     #[inline]
-    pub fn is_mouse_down(&self, button: i32) -> bool {
+    pub fn is_mouse_down<'a>(&'a self, button: i32) -> bool {
         unsafe { igIsMouseDown(button) }
     }
     #[inline]
-    pub fn is_mouse_dragging(&self, button: i32, lock_threshold: f32) -> bool {
-        unsafe { igIsMouseDragging(button, lock_threshold) }
+    pub fn is_mouse_dragging<'a>(
+        &'a self,
+        button: impl Into<Option<i32>>,
+        lock_threshold: impl Into<Option<f32>>,
+    ) -> bool {
+        unsafe {
+            igIsMouseDragging(
+                match button.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match lock_threshold.into() {
+                    Some(v) => v,
+                    None => -1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn is_mouse_hovering_rect(&self, r_min: ImVec2, r_max: ImVec2, clip: bool) -> bool {
-        unsafe { igIsMouseHoveringRect(r_min, r_max, clip) }
+    pub fn is_mouse_hovering_rect<'a>(&'a self, r_min: ImVec2, r_max: ImVec2, clip: impl Into<Option<bool>>) -> bool {
+        unsafe {
+            igIsMouseHoveringRect(
+                r_min,
+                r_max,
+                match clip.into() {
+                    Some(v) => v,
+                    None => true,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn is_mouse_pos_valid(&self, mouse_pos: &ImVec2) -> bool {
-        unsafe { igIsMousePosValid(mouse_pos) }
+    pub fn is_mouse_pos_valid<'a, 'b>(&'a self, mouse_pos: impl Into<Option<&'b ImVec2>>) -> bool {
+        unsafe {
+            igIsMousePosValid(match mouse_pos.into() {
+                Some(v) => v,
+                None => ::std::ptr::null(),
+            })
+        }
     }
     #[inline]
-    pub fn is_mouse_released(&self, button: i32) -> bool {
+    pub fn is_mouse_released<'a>(&'a self, button: i32) -> bool {
         unsafe { igIsMouseReleased(button) }
     }
     #[inline]
-    pub fn is_popup_open(&self, str_id: &CStr) -> bool {
+    pub fn is_popup_open<'a, 'b>(&'a self, str_id: &'b CStr) -> bool {
         unsafe { igIsPopupOpen(str_id.as_ptr()) }
     }
     #[inline]
-    pub fn is_rect_visible(&self, size: ImVec2) -> bool {
+    pub fn is_rect_visible<'a>(&'a self, size: ImVec2) -> bool {
         unsafe { igIsRectVisible(size) }
     }
     #[inline]
-    pub fn is_rect_visible_vec2(&self, rect_min: ImVec2, rect_max: ImVec2) -> bool {
+    pub fn is_rect_visible_vec2<'a>(&'a self, rect_min: ImVec2, rect_max: ImVec2) -> bool {
         unsafe { igIsRectVisibleVec2(rect_min, rect_max) }
     }
     #[inline]
-    pub fn is_window_appearing(&self) -> bool {
+    pub fn is_window_appearing<'a>(&'a self) -> bool {
         unsafe { igIsWindowAppearing() }
     }
     #[inline]
-    pub fn is_window_collapsed(&self) -> bool {
+    pub fn is_window_collapsed<'a>(&'a self) -> bool {
         unsafe { igIsWindowCollapsed() }
     }
     #[inline]
-    pub fn is_window_focused(&self, flags: ImGuiFocusedFlags) -> bool {
-        unsafe { igIsWindowFocused(flags) }
+    pub fn is_window_focused<'a>(&'a self, flags: impl Into<Option<ImGuiFocusedFlags>>) -> bool {
+        unsafe {
+            igIsWindowFocused(match flags.into() {
+                Some(v) => v,
+                None => ImGuiFocusedFlags::empty(),
+            })
+        }
     }
     #[inline]
-    pub fn is_window_hovered(&self, flags: ImGuiHoveredFlags) -> bool {
-        unsafe { igIsWindowHovered(flags) }
+    pub fn is_window_hovered<'a>(&'a self, flags: impl Into<Option<ImGuiHoveredFlags>>) -> bool {
+        unsafe {
+            igIsWindowHovered(match flags.into() {
+                Some(v) => v,
+                None => ImGuiHoveredFlags::empty(),
+            })
+        }
     }
     #[inline]
-    pub fn label_text(&self, label: &CStr, fmtstr: &CStr) {
-        unsafe { igLabelText(label.as_ptr(), cstr_ptr!("%s"), fmtstr.as_ptr()) };
+    pub fn label_text<'a, 'b, 'c>(&'a self, label: &'b CStr, fmt: &'c CStr) {
+        unsafe { igLabelText(label.as_ptr(), cstr_ptr!("%s"), fmt.as_ptr()) };
     }
     // pub fn list_box_str_arr : (*const c_char, *mut c_int, *const *const c_char, c_int, c_int) -> bool
     // pub fn list_box_fn_ptr : (*const c_char, *mut c_int, extern "C" fn(data: *mut c_void, idx: c_int, out_text: *mut *const c_char) -> bool, *mut c_void, c_int, c_int) -> bool
     #[inline]
-    pub fn list_box_footer(&self) {
+    pub fn list_box_footer<'a>(&'a self) {
         unsafe { igListBoxFooter() };
     }
     #[inline]
-    pub fn list_box_header_vec2(&self, label: &CStr, size: ImVec2) -> bool {
-        unsafe { igListBoxHeaderVec2(label.as_ptr(), size) }
+    pub fn list_box_header_vec2<'a, 'b>(&'a self, label: &'b CStr, size: impl Into<Option<ImVec2>>) -> bool {
+        unsafe {
+            igListBoxHeaderVec2(
+                label.as_ptr(),
+                match size.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+            )
+        }
     }
     #[inline]
-    pub fn list_box_header_int(&self, label: &CStr, items_count: i32, height_in_items: i32) -> bool {
-        unsafe { igListBoxHeaderInt(label.as_ptr(), items_count, height_in_items) }
+    pub fn list_box_header_int<'a, 'b>(
+        &'a self,
+        label: &'b CStr,
+        items_count: i32,
+        height_in_items: impl Into<Option<i32>>,
+    ) -> bool {
+        unsafe {
+            igListBoxHeaderInt(
+                label.as_ptr(),
+                items_count,
+                match height_in_items.into() {
+                    Some(v) => v,
+                    None => -1,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn load_ini_settings_from_disk(&self, ini_filename: &CStr) {
+    pub fn load_ini_settings_from_disk<'a, 'b>(&'a self, ini_filename: &'b CStr) {
         unsafe { igLoadIniSettingsFromDisk(ini_filename.as_ptr()) };
     }
     #[inline]
-    pub fn load_ini_settings_from_memory(&self, ini_data: &CStr, ini_size: usize) {
-        unsafe { igLoadIniSettingsFromMemory(ini_data.as_ptr(), ini_size) };
+    pub fn load_ini_settings_from_memory<'a, 'b>(&'a self, ini_data: &'b CStr, ini_size: impl Into<Option<usize>>) {
+        unsafe {
+            igLoadIniSettingsFromMemory(
+                ini_data.as_ptr(),
+                match ini_size.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+            )
+        };
     }
     #[inline]
-    pub fn log_buttons(&self) {
+    pub fn log_buttons<'a>(&'a self) {
         unsafe { igLogButtons() };
     }
     #[inline]
-    pub fn log_finish(&self) {
+    pub fn log_finish<'a>(&'a self) {
         unsafe { igLogFinish() };
     }
     #[inline]
-    pub fn log_text(&self, fmtstr: &CStr) {
-        unsafe { igLogText(cstr_ptr!("%s"), fmtstr.as_ptr()) };
+    pub fn log_text<'a, 'b>(&'a self, fmt: &'b CStr) {
+        unsafe { igLogText(cstr_ptr!("%s"), fmt.as_ptr()) };
     }
     #[inline]
-    pub fn log_to_clipboard(&self, max_depth: i32) {
-        unsafe { igLogToClipboard(max_depth) };
+    pub fn log_to_clipboard<'a>(&'a self, max_depth: impl Into<Option<i32>>) {
+        unsafe {
+            igLogToClipboard(match max_depth.into() {
+                Some(v) => v,
+                None => -1,
+            })
+        };
     }
     #[inline]
-    pub fn log_to_file(&self, max_depth: i32, filename: &CStr) {
-        unsafe { igLogToFile(max_depth, filename.as_ptr()) };
+    pub fn log_to_file<'a, 'b>(&'a self, max_depth: impl Into<Option<i32>>, filename: impl Into<Option<&'b CStr>>) {
+        unsafe {
+            igLogToFile(
+                match max_depth.into() {
+                    Some(v) => v,
+                    None => -1,
+                },
+                match filename.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn log_to_tty(&self, max_depth: i32) {
-        unsafe { igLogToTTY(max_depth) };
+    pub fn log_to_tty<'a>(&'a self, max_depth: impl Into<Option<i32>>) {
+        unsafe {
+            igLogToTTY(match max_depth.into() {
+                Some(v) => v,
+                None => -1,
+            })
+        };
     }
     #[inline]
-    pub fn menu_item_bool(&self, label: &CStr, shortcut: &CStr, selected: bool, enabled: bool) -> bool {
-        unsafe { igMenuItemBool(label.as_ptr(), shortcut.as_ptr(), selected, enabled) }
+    pub fn menu_item_bool<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        shortcut: impl Into<Option<&'c CStr>>,
+        selected: impl Into<Option<bool>>,
+        enabled: impl Into<Option<bool>>,
+    ) -> bool {
+        unsafe {
+            igMenuItemBool(
+                label.as_ptr(),
+                match shortcut.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+                match selected.into() {
+                    Some(v) => v,
+                    None => false,
+                },
+                match enabled.into() {
+                    Some(v) => v,
+                    None => true,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn menu_item_bool_ptr(&self, label: &CStr, shortcut: &CStr, p_selected: &mut bool, enabled: bool) -> bool {
-        unsafe { igMenuItemBoolPtr(label.as_ptr(), shortcut.as_ptr(), p_selected, enabled) }
+    pub fn menu_item_bool_ptr<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        shortcut: &'c CStr,
+        p_selected: &'d mut bool,
+        enabled: impl Into<Option<bool>>,
+    ) -> bool {
+        unsafe {
+            igMenuItemBoolPtr(
+                label.as_ptr(),
+                shortcut.as_ptr(),
+                p_selected,
+                match enabled.into() {
+                    Some(v) => v,
+                    None => true,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn new_frame(&self) {
+    pub fn new_frame<'a>(&'a self) {
         unsafe { igNewFrame() };
     }
     #[inline]
-    pub fn new_line(&self) {
+    pub fn new_line<'a>(&'a self) {
         unsafe { igNewLine() };
     }
     #[inline]
-    pub fn next_column(&self) {
+    pub fn next_column<'a>(&'a self) {
         unsafe { igNextColumn() };
     }
     #[inline]
-    pub fn open_popup(&self, str_id: &CStr) {
+    pub fn open_popup<'a, 'b>(&'a self, str_id: &'b CStr) {
         unsafe { igOpenPopup(str_id.as_ptr()) };
     }
     #[inline]
-    pub fn open_popup_on_item_click(&self, str_id: &CStr, mouse_button: i32) -> bool {
-        unsafe { igOpenPopupOnItemClick(str_id.as_ptr(), mouse_button) }
+    pub fn open_popup_on_item_click<'a, 'b>(
+        &'a self,
+        str_id: impl Into<Option<&'b CStr>>,
+        mouse_button: impl Into<Option<i32>>,
+    ) -> bool {
+        unsafe {
+            igOpenPopupOnItemClick(
+                match str_id.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+                match mouse_button.into() {
+                    Some(v) => v,
+                    None => 1,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn plot_histogram_float_ptr(
-        &self,
-        label: &CStr,
-        values: &f32,
+    pub fn plot_histogram_float_ptr<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        values: &'c f32,
         values_count: i32,
-        values_offset: i32,
-        overlay_text: &CStr,
-        scale_min: f32,
-        scale_max: f32,
-        graph_size: ImVec2,
-        stride: i32,
+        values_offset: impl Into<Option<i32>>,
+        overlay_text: impl Into<Option<&'d CStr>>,
+        scale_min: impl Into<Option<f32>>,
+        scale_max: impl Into<Option<f32>>,
+        graph_size: impl Into<Option<ImVec2>>,
+        stride: impl Into<Option<i32>>,
     ) {
         unsafe {
             igPlotHistogramFloatPtr(
                 label.as_ptr(),
                 values,
                 values_count,
-                values_offset,
-                overlay_text.as_ptr(),
-                scale_min,
-                scale_max,
-                graph_size,
-                stride,
+                match values_offset.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match overlay_text.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+                match scale_min.into() {
+                    Some(v) => v,
+                    None => ::std::f32::MAX,
+                },
+                match scale_max.into() {
+                    Some(v) => v,
+                    None => ::std::f32::MAX,
+                },
+                match graph_size.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+                match stride.into() {
+                    Some(v) => v,
+                    None => ::std::mem::size_of::<f32>() as i32,
+                },
             )
         };
     }
     // pub fn plot_histogram_fn_ptr : (*const c_char, extern "C" fn(data: *mut c_void, idx: c_int) -> c_float, *mut c_void, c_int, c_int, *const c_char, c_float, c_float, ImVec2) -> undefined
     #[inline]
-    pub fn plot_lines(
-        &self,
-        label: &CStr,
-        values: &f32,
+    pub fn plot_lines<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        values: &'c f32,
         values_count: i32,
-        values_offset: i32,
-        overlay_text: &CStr,
-        scale_min: f32,
-        scale_max: f32,
-        graph_size: ImVec2,
-        stride: i32,
+        values_offset: impl Into<Option<i32>>,
+        overlay_text: impl Into<Option<&'d CStr>>,
+        scale_min: impl Into<Option<f32>>,
+        scale_max: impl Into<Option<f32>>,
+        graph_size: impl Into<Option<ImVec2>>,
+        stride: impl Into<Option<i32>>,
     ) {
         unsafe {
             igPlotLines(
                 label.as_ptr(),
                 values,
                 values_count,
-                values_offset,
-                overlay_text.as_ptr(),
-                scale_min,
-                scale_max,
-                graph_size,
-                stride,
+                match values_offset.into() {
+                    Some(v) => v,
+                    None => 0,
+                },
+                match overlay_text.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+                match scale_min.into() {
+                    Some(v) => v,
+                    None => ::std::f32::MAX,
+                },
+                match scale_max.into() {
+                    Some(v) => v,
+                    None => ::std::f32::MAX,
+                },
+                match graph_size.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+                match stride.into() {
+                    Some(v) => v,
+                    None => ::std::mem::size_of::<f32>() as i32,
+                },
             )
         };
     }
     // pub fn plot_lines_fn_ptr : (*const c_char, extern "C" fn(data: *mut c_void, idx: c_int) -> c_float, *mut c_void, c_int, c_int, *const c_char, c_float, c_float, ImVec2) -> undefined
     #[inline]
-    pub fn pop_allow_keyboard_focus(&self) {
+    pub fn pop_allow_keyboard_focus<'a>(&'a self) {
         unsafe { igPopAllowKeyboardFocus() };
     }
     #[inline]
-    pub fn pop_button_repeat(&self) {
+    pub fn pop_button_repeat<'a>(&'a self) {
         unsafe { igPopButtonRepeat() };
     }
     #[inline]
-    pub fn pop_clip_rect(&self) {
+    pub fn pop_clip_rect<'a>(&'a self) {
         unsafe { igPopClipRect() };
     }
     #[inline]
-    pub fn pop_font(&self) {
+    pub fn pop_font<'a>(&'a self) {
         unsafe { igPopFont() };
     }
     #[inline]
-    pub fn pop_id(&self) {
+    pub fn pop_id<'a>(&'a self) {
         unsafe { igPopID() };
     }
     #[inline]
-    pub fn pop_item_width(&self) {
+    pub fn pop_item_width<'a>(&'a self) {
         unsafe { igPopItemWidth() };
     }
     #[inline]
-    pub fn pop_style_color(&self, count: i32) {
-        unsafe { igPopStyleColor(count) };
+    pub fn pop_style_color<'a>(&'a self, count: impl Into<Option<i32>>) {
+        unsafe {
+            igPopStyleColor(match count.into() {
+                Some(v) => v,
+                None => 1,
+            })
+        };
     }
     #[inline]
-    pub fn pop_style_var(&self, count: i32) {
-        unsafe { igPopStyleVar(count) };
+    pub fn pop_style_var<'a>(&'a self, count: impl Into<Option<i32>>) {
+        unsafe {
+            igPopStyleVar(match count.into() {
+                Some(v) => v,
+                None => 1,
+            })
+        };
     }
     #[inline]
-    pub fn pop_text_wrap_pos(&self) {
+    pub fn pop_text_wrap_pos<'a>(&'a self) {
         unsafe { igPopTextWrapPos() };
     }
     #[inline]
-    pub fn progress_bar(&self, fraction: f32, size_arg: ImVec2, overlay: &CStr) {
-        unsafe { igProgressBar(fraction, size_arg, overlay.as_ptr()) };
+    pub fn progress_bar<'a, 'b>(
+        &'a self,
+        fraction: f32,
+        size_arg: impl Into<Option<ImVec2>>,
+        overlay: impl Into<Option<&'b CStr>>,
+    ) {
+        unsafe {
+            igProgressBar(
+                fraction,
+                match size_arg.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: -1.0, y: 0.0 },
+                },
+                match overlay.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn push_allow_keyboard_focus(&self, allow_keyboard_focus: bool) {
+    pub fn push_allow_keyboard_focus<'a>(&'a self, allow_keyboard_focus: bool) {
         unsafe { igPushAllowKeyboardFocus(allow_keyboard_focus) };
     }
     #[inline]
-    pub fn push_button_repeat(&self, repeat: bool) {
+    pub fn push_button_repeat<'a>(&'a self, repeat: bool) {
         unsafe { igPushButtonRepeat(repeat) };
     }
     #[inline]
-    pub fn push_clip_rect(&self, clip_rect_min: ImVec2, clip_rect_max: ImVec2, intersect_with_current_clip_rect: bool) {
+    pub fn push_clip_rect<'a>(
+        &'a self,
+        clip_rect_min: ImVec2,
+        clip_rect_max: ImVec2,
+        intersect_with_current_clip_rect: bool,
+    ) {
         unsafe { igPushClipRect(clip_rect_min, clip_rect_max, intersect_with_current_clip_rect) };
     }
     // pub fn push_font : (*mut ImFont) -> undefined
     #[inline]
-    pub fn push_id_str(&self, str_id: &CStr) {
+    pub fn push_id_str<'a, 'b>(&'a self, str_id: &'b CStr) {
         unsafe { igPushIDStr(str_id.as_ptr()) };
     }
     #[inline]
-    pub fn push_id_range(&self, str_id_begin: &CStr, str_id_end: &CStr) {
+    pub fn push_id_range<'a, 'b, 'c>(&'a self, str_id_begin: &'b CStr, str_id_end: &'c CStr) {
         unsafe { igPushIDRange(str_id_begin.as_ptr(), str_id_end.as_ptr()) };
     }
     // pub fn push_id_ptr : (*const c_void) -> undefined
     #[inline]
-    pub fn push_id_int(&self, int_id: i32) {
+    pub fn push_id_int<'a>(&'a self, int_id: i32) {
         unsafe { igPushIDInt(int_id) };
     }
     #[inline]
-    pub fn push_item_width(&self, item_width: f32) {
+    pub fn push_item_width<'a>(&'a self, item_width: f32) {
         unsafe { igPushItemWidth(item_width) };
     }
     #[inline]
-    pub fn push_style_color_u32(&self, idx: ImGuiCol, col: u32) {
+    pub fn push_style_color_u32<'a>(&'a self, idx: ImGuiCol, col: u32) {
         unsafe { igPushStyleColorU32(idx, col) };
     }
     #[inline]
-    pub fn push_style_color(&self, idx: ImGuiCol, col: ImVec4) {
+    pub fn push_style_color<'a>(&'a self, idx: ImGuiCol, col: ImVec4) {
         unsafe { igPushStyleColor(idx, col) };
     }
     #[inline]
-    pub fn push_style_var_float(&self, idx: ImGuiStyleVar, val: f32) {
+    pub fn push_style_var_float<'a>(&'a self, idx: ImGuiStyleVar, val: f32) {
         unsafe { igPushStyleVarFloat(idx, val) };
     }
     #[inline]
-    pub fn push_style_var_vec2(&self, idx: ImGuiStyleVar, val: ImVec2) {
+    pub fn push_style_var_vec2<'a>(&'a self, idx: ImGuiStyleVar, val: ImVec2) {
         unsafe { igPushStyleVarVec2(idx, val) };
     }
     #[inline]
-    pub fn push_text_wrap_pos(&self, wrap_pos_x: f32) {
-        unsafe { igPushTextWrapPos(wrap_pos_x) };
+    pub fn push_text_wrap_pos<'a>(&'a self, wrap_pos_x: impl Into<Option<f32>>) {
+        unsafe {
+            igPushTextWrapPos(match wrap_pos_x.into() {
+                Some(v) => v,
+                None => 0.0,
+            })
+        };
     }
     #[inline]
-    pub fn radio_button_bool(&self, label: &CStr, active: bool) -> bool {
+    pub fn radio_button_bool<'a, 'b>(&'a self, label: &'b CStr, active: bool) -> bool {
         unsafe { igRadioButtonBool(label.as_ptr(), active) }
     }
     #[inline]
-    pub fn radio_button_int_ptr(&self, label: &CStr, v: &mut i32, v_button: i32) -> bool {
+    pub fn radio_button_int_ptr<'a, 'b, 'c>(&'a self, label: &'b CStr, v: &'c mut i32, v_button: i32) -> bool {
         unsafe { igRadioButtonIntPtr(label.as_ptr(), v, v_button) }
     }
     #[inline]
-    pub fn render(&self) {
+    pub fn render<'a>(&'a self) {
         unsafe { igRender() };
     }
     #[inline]
-    pub fn reset_mouse_drag_delta(&self, button: i32) {
-        unsafe { igResetMouseDragDelta(button) };
+    pub fn reset_mouse_drag_delta<'a>(&'a self, button: impl Into<Option<i32>>) {
+        unsafe {
+            igResetMouseDragDelta(match button.into() {
+                Some(v) => v,
+                None => 0,
+            })
+        };
     }
     #[inline]
-    pub fn same_line(&self, pos_x: f32, spacing_w: f32) {
-        unsafe { igSameLine(pos_x, spacing_w) };
+    pub fn same_line<'a>(&'a self, pos_x: impl Into<Option<f32>>, spacing_w: impl Into<Option<f32>>) {
+        unsafe {
+            igSameLine(
+                match pos_x.into() {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match spacing_w.into() {
+                    Some(v) => v,
+                    None => -1.0,
+                },
+            )
+        };
     }
     #[inline]
-    pub fn save_ini_settings_to_disk(&self, ini_filename: &CStr) {
+    pub fn save_ini_settings_to_disk<'a, 'b>(&'a self, ini_filename: &'b CStr) {
         unsafe { igSaveIniSettingsToDisk(ini_filename.as_ptr()) };
     }
     #[inline]
-    pub fn save_ini_settings_to_memory(&self, out_ini_size: &mut usize) -> String {
+    pub fn save_ini_settings_to_memory<'a, 'b>(&'a self, out_ini_size: impl Into<Option<&'b mut usize>>) -> String {
         unsafe {
-            CStr::from_ptr(igSaveIniSettingsToMemory(out_ini_size))
-                .to_string_lossy()
-                .into_owned()
+            CStr::from_ptr(igSaveIniSettingsToMemory(match out_ini_size.into() {
+                Some(v) => v,
+                None => ::std::ptr::null_mut(),
+            }))
+            .to_string_lossy()
+            .into_owned()
         }
     }
     #[inline]
-    pub fn selectable(&self, label: &CStr, selected: bool, flags: ImGuiSelectableFlags, size: ImVec2) -> bool {
-        unsafe { igSelectable(label.as_ptr(), selected, flags, size) }
-    }
-    #[inline]
-    pub fn selectable_bool_ptr(
-        &self,
-        label: &CStr,
-        p_selected: &mut bool,
-        flags: ImGuiSelectableFlags,
-        size: ImVec2,
+    pub fn selectable<'a, 'b>(
+        &'a self,
+        label: &'b CStr,
+        selected: impl Into<Option<bool>>,
+        flags: impl Into<Option<ImGuiSelectableFlags>>,
+        size: impl Into<Option<ImVec2>>,
     ) -> bool {
-        unsafe { igSelectableBoolPtr(label.as_ptr(), p_selected, flags, size) }
+        unsafe {
+            igSelectable(
+                label.as_ptr(),
+                match selected.into() {
+                    Some(v) => v,
+                    None => false,
+                },
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiSelectableFlags::empty(),
+                },
+                match size.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+            )
+        }
     }
     #[inline]
-    pub fn separator(&self) {
+    pub fn selectable_bool_ptr<'a, 'b, 'c>(
+        &'a self,
+        label: &'b CStr,
+        p_selected: &'c mut bool,
+        flags: impl Into<Option<ImGuiSelectableFlags>>,
+        size: impl Into<Option<ImVec2>>,
+    ) -> bool {
+        unsafe {
+            igSelectableBoolPtr(
+                label.as_ptr(),
+                p_selected,
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiSelectableFlags::empty(),
+                },
+                match size.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+            )
+        }
+    }
+    #[inline]
+    pub fn separator<'a>(&'a self) {
         unsafe { igSeparator() };
     }
     #[inline]
-    pub fn set_clipboard_text(&self, text: &CStr) {
+    pub fn set_clipboard_text<'a, 'b>(&'a self, text: &'b CStr) {
         unsafe { igSetClipboardText(text.as_ptr()) };
     }
     #[inline]
-    pub fn set_color_edit_options(&self, flags: ImGuiColorEditFlags) {
+    pub fn set_color_edit_options<'a>(&'a self, flags: ImGuiColorEditFlags) {
         unsafe { igSetColorEditOptions(flags) };
     }
     #[inline]
-    pub fn set_column_offset(&self, column_index: i32, offset_x: f32) {
+    pub fn set_column_offset<'a>(&'a self, column_index: i32, offset_x: f32) {
         unsafe { igSetColumnOffset(column_index, offset_x) };
     }
     #[inline]
-    pub fn set_column_width(&self, column_index: i32, width: f32) {
+    pub fn set_column_width<'a>(&'a self, column_index: i32, width: f32) {
         unsafe { igSetColumnWidth(column_index, width) };
     }
     #[inline]
-    pub fn set_cursor_pos(&self, local_pos: ImVec2) {
+    pub fn set_cursor_pos<'a>(&'a self, local_pos: ImVec2) {
         unsafe { igSetCursorPos(local_pos) };
     }
     #[inline]
-    pub fn set_cursor_pos_x(&self, x: f32) {
+    pub fn set_cursor_pos_x<'a>(&'a self, x: f32) {
         unsafe { igSetCursorPosX(x) };
     }
     #[inline]
-    pub fn set_cursor_pos_y(&self, y: f32) {
+    pub fn set_cursor_pos_y<'a>(&'a self, y: f32) {
         unsafe { igSetCursorPosY(y) };
     }
     #[inline]
-    pub fn set_cursor_screen_pos(&self, screen_pos: ImVec2) {
+    pub fn set_cursor_screen_pos<'a>(&'a self, screen_pos: ImVec2) {
         unsafe { igSetCursorScreenPos(screen_pos) };
     }
     // pub fn set_drag_drop_payload : (*const c_char, *const c_void, size_t, ImGuiCond) -> bool
     #[inline]
-    pub fn set_item_allow_overlap(&self) {
+    pub fn set_item_allow_overlap<'a>(&'a self) {
         unsafe { igSetItemAllowOverlap() };
     }
     #[inline]
-    pub fn set_item_default_focus(&self) {
+    pub fn set_item_default_focus<'a>(&'a self) {
         unsafe { igSetItemDefaultFocus() };
     }
     #[inline]
-    pub fn set_keyboard_focus_here(&self, offset: i32) {
-        unsafe { igSetKeyboardFocusHere(offset) };
+    pub fn set_keyboard_focus_here<'a>(&'a self, offset: impl Into<Option<i32>>) {
+        unsafe {
+            igSetKeyboardFocusHere(match offset.into() {
+                Some(v) => v,
+                None => 0,
+            })
+        };
     }
     #[inline]
-    pub fn set_mouse_cursor(&self, _type: ImGuiMouseCursor) {
+    pub fn set_mouse_cursor<'a>(&'a self, _type: ImGuiMouseCursor) {
         unsafe { igSetMouseCursor(_type) };
     }
     #[inline]
-    pub fn set_next_tree_node_open(&self, is_open: bool, cond: ImGuiCond) {
-        unsafe { igSetNextTreeNodeOpen(is_open, cond) };
+    pub fn set_next_tree_node_open<'a>(&'a self, is_open: bool, cond: impl Into<Option<ImGuiCond>>) {
+        unsafe {
+            igSetNextTreeNodeOpen(
+                is_open,
+                match cond.into() {
+                    Some(v) => v,
+                    None => ImGuiCond::empty(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn set_next_window_bg_alpha(&self, alpha: f32) {
+    pub fn set_next_window_bg_alpha<'a>(&'a self, alpha: f32) {
         unsafe { igSetNextWindowBgAlpha(alpha) };
     }
     #[inline]
-    pub fn set_next_window_collapsed(&self, collapsed: bool, cond: ImGuiCond) {
-        unsafe { igSetNextWindowCollapsed(collapsed, cond) };
+    pub fn set_next_window_collapsed<'a>(&'a self, collapsed: bool, cond: impl Into<Option<ImGuiCond>>) {
+        unsafe {
+            igSetNextWindowCollapsed(
+                collapsed,
+                match cond.into() {
+                    Some(v) => v,
+                    None => ImGuiCond::empty(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn set_next_window_content_size(&self, size: ImVec2) {
+    pub fn set_next_window_content_size<'a>(&'a self, size: ImVec2) {
         unsafe { igSetNextWindowContentSize(size) };
     }
     #[inline]
-    pub fn set_next_window_focus(&self) {
+    pub fn set_next_window_focus<'a>(&'a self) {
         unsafe { igSetNextWindowFocus() };
     }
     #[inline]
-    pub fn set_next_window_pos(&self, pos: ImVec2, cond: ImGuiCond, pivot: ImVec2) {
-        unsafe { igSetNextWindowPos(pos, cond, pivot) };
+    pub fn set_next_window_pos<'a>(
+        &'a self,
+        pos: ImVec2,
+        cond: impl Into<Option<ImGuiCond>>,
+        pivot: impl Into<Option<ImVec2>>,
+    ) {
+        unsafe {
+            igSetNextWindowPos(
+                pos,
+                match cond.into() {
+                    Some(v) => v,
+                    None => ImGuiCond::empty(),
+                },
+                match pivot.into() {
+                    Some(v) => v,
+                    None => ImVec2 { x: 0.0, y: 0.0 },
+                },
+            )
+        };
     }
     #[inline]
-    pub fn set_next_window_size(&self, size: ImVec2, cond: ImGuiCond) {
-        unsafe { igSetNextWindowSize(size, cond) };
+    pub fn set_next_window_size<'a>(&'a self, size: ImVec2, cond: impl Into<Option<ImGuiCond>>) {
+        unsafe {
+            igSetNextWindowSize(
+                size,
+                match cond.into() {
+                    Some(v) => v,
+                    None => ImGuiCond::empty(),
+                },
+            )
+        };
     }
     // pub fn set_next_window_size_constraints : (ImVec2, ImVec2, ImGuiSizeCallback, *mut c_void) -> undefined
     #[inline]
-    pub fn set_scroll_from_pos_y(&self, pos_y: f32, center_y_ratio: f32) {
-        unsafe { igSetScrollFromPosY(pos_y, center_y_ratio) };
+    pub fn set_scroll_from_pos_y<'a>(&'a self, pos_y: f32, center_y_ratio: impl Into<Option<f32>>) {
+        unsafe {
+            igSetScrollFromPosY(
+                pos_y,
+                match center_y_ratio.into() {
+                    Some(v) => v,
+                    None => 0.5,
+                },
+            )
+        };
     }
     #[inline]
-    pub fn set_scroll_here_y(&self, center_y_ratio: f32) {
-        unsafe { igSetScrollHereY(center_y_ratio) };
+    pub fn set_scroll_here_y<'a>(&'a self, center_y_ratio: impl Into<Option<f32>>) {
+        unsafe {
+            igSetScrollHereY(match center_y_ratio.into() {
+                Some(v) => v,
+                None => 0.5,
+            })
+        };
     }
     #[inline]
-    pub fn set_scroll_x(&self, scroll_x: f32) {
+    pub fn set_scroll_x<'a>(&'a self, scroll_x: f32) {
         unsafe { igSetScrollX(scroll_x) };
     }
     #[inline]
-    pub fn set_scroll_y(&self, scroll_y: f32) {
+    pub fn set_scroll_y<'a>(&'a self, scroll_y: f32) {
         unsafe { igSetScrollY(scroll_y) };
     }
     // pub fn set_state_storage : (*mut ImGuiStorage) -> undefined
     #[inline]
-    pub fn set_tooltip(&self, fmtstr: &CStr) {
-        unsafe { igSetTooltip(cstr_ptr!("%s"), fmtstr.as_ptr()) };
+    pub fn set_tooltip<'a, 'b>(&'a self, fmt: &'b CStr) {
+        unsafe { igSetTooltip(cstr_ptr!("%s"), fmt.as_ptr()) };
     }
     #[inline]
-    pub fn set_window_collapsed_bool(&self, collapsed: bool, cond: ImGuiCond) {
-        unsafe { igSetWindowCollapsedBool(collapsed, cond) };
+    pub fn set_window_collapsed_bool<'a>(&'a self, collapsed: bool, cond: impl Into<Option<ImGuiCond>>) {
+        unsafe {
+            igSetWindowCollapsedBool(
+                collapsed,
+                match cond.into() {
+                    Some(v) => v,
+                    None => ImGuiCond::empty(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn set_window_collapsed_str(&self, name: &CStr, collapsed: bool, cond: ImGuiCond) {
-        unsafe { igSetWindowCollapsedStr(name.as_ptr(), collapsed, cond) };
+    pub fn set_window_collapsed_str<'a, 'b>(
+        &'a self,
+        name: &'b CStr,
+        collapsed: bool,
+        cond: impl Into<Option<ImGuiCond>>,
+    ) {
+        unsafe {
+            igSetWindowCollapsedStr(
+                name.as_ptr(),
+                collapsed,
+                match cond.into() {
+                    Some(v) => v,
+                    None => ImGuiCond::empty(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn set_window_focus(&self) {
+    pub fn set_window_focus<'a>(&'a self) {
         unsafe { igSetWindowFocus() };
     }
     #[inline]
-    pub fn set_window_focus_str(&self, name: &CStr) {
+    pub fn set_window_focus_str<'a, 'b>(&'a self, name: &'b CStr) {
         unsafe { igSetWindowFocusStr(name.as_ptr()) };
     }
     #[inline]
-    pub fn set_window_font_scale(&self, scale: f32) {
+    pub fn set_window_font_scale<'a>(&'a self, scale: f32) {
         unsafe { igSetWindowFontScale(scale) };
     }
     #[inline]
-    pub fn set_window_pos_vec2(&self, pos: ImVec2, cond: ImGuiCond) {
-        unsafe { igSetWindowPosVec2(pos, cond) };
+    pub fn set_window_pos_vec2<'a>(&'a self, pos: ImVec2, cond: impl Into<Option<ImGuiCond>>) {
+        unsafe {
+            igSetWindowPosVec2(
+                pos,
+                match cond.into() {
+                    Some(v) => v,
+                    None => ImGuiCond::empty(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn set_window_pos_str(&self, name: &CStr, pos: ImVec2, cond: ImGuiCond) {
-        unsafe { igSetWindowPosStr(name.as_ptr(), pos, cond) };
+    pub fn set_window_pos_str<'a, 'b>(&'a self, name: &'b CStr, pos: ImVec2, cond: impl Into<Option<ImGuiCond>>) {
+        unsafe {
+            igSetWindowPosStr(
+                name.as_ptr(),
+                pos,
+                match cond.into() {
+                    Some(v) => v,
+                    None => ImGuiCond::empty(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn set_window_size_vec2(&self, size: ImVec2, cond: ImGuiCond) {
-        unsafe { igSetWindowSizeVec2(size, cond) };
+    pub fn set_window_size_vec2<'a>(&'a self, size: ImVec2, cond: impl Into<Option<ImGuiCond>>) {
+        unsafe {
+            igSetWindowSizeVec2(
+                size,
+                match cond.into() {
+                    Some(v) => v,
+                    None => ImGuiCond::empty(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn set_window_size_str(&self, name: &CStr, size: ImVec2, cond: ImGuiCond) {
-        unsafe { igSetWindowSizeStr(name.as_ptr(), size, cond) };
+    pub fn set_window_size_str<'a, 'b>(&'a self, name: &'b CStr, size: ImVec2, cond: impl Into<Option<ImGuiCond>>) {
+        unsafe {
+            igSetWindowSizeStr(
+                name.as_ptr(),
+                size,
+                match cond.into() {
+                    Some(v) => v,
+                    None => ImGuiCond::empty(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn show_about_window(&self, p_open: &mut bool) {
-        unsafe { igShowAboutWindow(p_open) };
+    pub fn show_about_window<'a, 'b>(&'a self, p_open: impl Into<Option<&'b mut bool>>) {
+        unsafe {
+            igShowAboutWindow(match p_open.into() {
+                Some(v) => v,
+                None => ::std::ptr::null_mut(),
+            })
+        };
     }
     #[inline]
-    pub fn show_demo_window(&self, p_open: &mut bool) {
-        unsafe { igShowDemoWindow(p_open) };
+    pub fn show_demo_window<'a, 'b>(&'a self, p_open: impl Into<Option<&'b mut bool>>) {
+        unsafe {
+            igShowDemoWindow(match p_open.into() {
+                Some(v) => v,
+                None => ::std::ptr::null_mut(),
+            })
+        };
     }
     #[inline]
-    pub fn show_font_selector(&self, label: &CStr) {
+    pub fn show_font_selector<'a, 'b>(&'a self, label: &'b CStr) {
         unsafe { igShowFontSelector(label.as_ptr()) };
     }
     #[inline]
-    pub fn show_metrics_window(&self, p_open: &mut bool) {
-        unsafe { igShowMetricsWindow(p_open) };
+    pub fn show_metrics_window<'a, 'b>(&'a self, p_open: impl Into<Option<&'b mut bool>>) {
+        unsafe {
+            igShowMetricsWindow(match p_open.into() {
+                Some(v) => v,
+                None => ::std::ptr::null_mut(),
+            })
+        };
     }
     // pub fn show_style_editor : (*mut ImGuiStyle) -> undefined
     #[inline]
-    pub fn show_style_selector(&self, label: &CStr) -> bool {
+    pub fn show_style_selector<'a, 'b>(&'a self, label: &'b CStr) -> bool {
         unsafe { igShowStyleSelector(label.as_ptr()) }
     }
     #[inline]
-    pub fn show_user_guide(&self) {
+    pub fn show_user_guide<'a>(&'a self) {
         unsafe { igShowUserGuide() };
     }
     #[inline]
-    pub fn slider_angle(
-        &self,
-        label: &CStr,
-        v_rad: &mut f32,
-        v_degrees_min: f32,
-        v_degrees_max: f32,
-        format: &CStr,
+    pub fn slider_angle<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v_rad: &'c mut f32,
+        v_degrees_min: impl Into<Option<f32>>,
+        v_degrees_max: impl Into<Option<f32>>,
+        format: impl Into<Option<&'d CStr>>,
     ) -> bool {
-        unsafe { igSliderAngle(label.as_ptr(), v_rad, v_degrees_min, v_degrees_max, format.as_ptr()) }
+        unsafe {
+            igSliderAngle(
+                label.as_ptr(),
+                v_rad,
+                match v_degrees_min.into() {
+                    Some(v) => v,
+                    None => -360.0,
+                },
+                match v_degrees_max.into() {
+                    Some(v) => v,
+                    None => 360.0,
+                },
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.0f deg"),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn slider_float(&self, label: &CStr, v: &mut f32, v_min: f32, v_max: f32, format: &CStr, power: f32) -> bool {
-        unsafe { igSliderFloat(label.as_ptr(), v, v_min, v_max, format.as_ptr(), power) }
-    }
-    #[inline]
-    pub fn slider_float2(
-        &self,
-        label: &CStr,
-        v: &mut [f32; 2],
+    pub fn slider_float<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut f32,
         v_min: f32,
         v_max: f32,
-        format: &CStr,
-        power: f32,
+        format: impl Into<Option<&'d CStr>>,
+        power: impl Into<Option<f32>>,
     ) -> bool {
-        unsafe { igSliderFloat2(label.as_ptr(), v, v_min, v_max, format.as_ptr(), power) }
+        unsafe {
+            igSliderFloat(
+                label.as_ptr(),
+                v,
+                v_min,
+                v_max,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match power.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn slider_float3(
-        &self,
-        label: &CStr,
-        v: &mut [f32; 3],
+    pub fn slider_float2<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [f32; 2],
         v_min: f32,
         v_max: f32,
-        format: &CStr,
-        power: f32,
+        format: impl Into<Option<&'d CStr>>,
+        power: impl Into<Option<f32>>,
     ) -> bool {
-        unsafe { igSliderFloat3(label.as_ptr(), v, v_min, v_max, format.as_ptr(), power) }
+        unsafe {
+            igSliderFloat2(
+                label.as_ptr(),
+                v,
+                v_min,
+                v_max,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match power.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn slider_float4(
-        &self,
-        label: &CStr,
-        v: &mut [f32; 4],
+    pub fn slider_float3<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [f32; 3],
         v_min: f32,
         v_max: f32,
-        format: &CStr,
-        power: f32,
+        format: impl Into<Option<&'d CStr>>,
+        power: impl Into<Option<f32>>,
     ) -> bool {
-        unsafe { igSliderFloat4(label.as_ptr(), v, v_min, v_max, format.as_ptr(), power) }
+        unsafe {
+            igSliderFloat3(
+                label.as_ptr(),
+                v,
+                v_min,
+                v_max,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match power.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn slider_int(&self, label: &CStr, v: &mut i32, v_min: i32, v_max: i32, format: &CStr) -> bool {
-        unsafe { igSliderInt(label.as_ptr(), v, v_min, v_max, format.as_ptr()) }
+    pub fn slider_float4<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [f32; 4],
+        v_min: f32,
+        v_max: f32,
+        format: impl Into<Option<&'d CStr>>,
+        power: impl Into<Option<f32>>,
+    ) -> bool {
+        unsafe {
+            igSliderFloat4(
+                label.as_ptr(),
+                v,
+                v_min,
+                v_max,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match power.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn slider_int2(&self, label: &CStr, v: &mut [i32; 2], v_min: i32, v_max: i32, format: &CStr) -> bool {
-        unsafe { igSliderInt2(label.as_ptr(), v, v_min, v_max, format.as_ptr()) }
+    pub fn slider_int<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut i32,
+        v_min: i32,
+        v_max: i32,
+        format: impl Into<Option<&'d CStr>>,
+    ) -> bool {
+        unsafe {
+            igSliderInt(
+                label.as_ptr(),
+                v,
+                v_min,
+                v_max,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%d"),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn slider_int3(&self, label: &CStr, v: &mut [i32; 3], v_min: i32, v_max: i32, format: &CStr) -> bool {
-        unsafe { igSliderInt3(label.as_ptr(), v, v_min, v_max, format.as_ptr()) }
+    pub fn slider_int2<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [i32; 2],
+        v_min: i32,
+        v_max: i32,
+        format: impl Into<Option<&'d CStr>>,
+    ) -> bool {
+        unsafe {
+            igSliderInt2(
+                label.as_ptr(),
+                v,
+                v_min,
+                v_max,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%d"),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn slider_int4(&self, label: &CStr, v: &mut [i32; 4], v_min: i32, v_max: i32, format: &CStr) -> bool {
-        unsafe { igSliderInt4(label.as_ptr(), v, v_min, v_max, format.as_ptr()) }
+    pub fn slider_int3<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [i32; 3],
+        v_min: i32,
+        v_max: i32,
+        format: impl Into<Option<&'d CStr>>,
+    ) -> bool {
+        unsafe {
+            igSliderInt3(
+                label.as_ptr(),
+                v,
+                v_min,
+                v_max,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%d"),
+                },
+            )
+        }
+    }
+    #[inline]
+    pub fn slider_int4<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        v: &'c mut [i32; 4],
+        v_min: i32,
+        v_max: i32,
+        format: impl Into<Option<&'d CStr>>,
+    ) -> bool {
+        unsafe {
+            igSliderInt4(
+                label.as_ptr(),
+                v,
+                v_min,
+                v_max,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%d"),
+                },
+            )
+        }
     }
     // pub fn slider_scalar : (*const c_char, ImGuiDataType, *mut c_void, *const c_void, *const c_void, *const c_char, c_float) -> bool
     // pub fn slider_scalar_n : (*const c_char, ImGuiDataType, *mut c_void, c_int, *const c_void, *const c_void, *const c_char, c_float) -> bool
     #[inline]
-    pub fn small_button(&self, label: &CStr) -> bool {
+    pub fn small_button<'a, 'b>(&'a self, label: &'b CStr) -> bool {
         unsafe { igSmallButton(label.as_ptr()) }
     }
     #[inline]
-    pub fn spacing(&self) {
+    pub fn spacing<'a>(&'a self) {
         unsafe { igSpacing() };
     }
     // pub fn style_colors_classic : (*mut ImGuiStyle) -> undefined
     // pub fn style_colors_dark : (*mut ImGuiStyle) -> undefined
     // pub fn style_colors_light : (*mut ImGuiStyle) -> undefined
     #[inline]
-    pub fn text(&self, fmtstr: &CStr) {
-        unsafe { igText(cstr_ptr!("%s"), fmtstr.as_ptr()) };
+    pub fn text<'a, 'b>(&'a self, fmt: &'b CStr) {
+        unsafe { igText(cstr_ptr!("%s"), fmt.as_ptr()) };
     }
     #[inline]
-    pub fn text_colored(&self, col: ImVec4, fmtstr: &CStr) {
-        unsafe { igTextColored(col, cstr_ptr!("%s"), fmtstr.as_ptr()) };
+    pub fn text_colored<'a, 'b>(&'a self, col: ImVec4, fmt: &'b CStr) {
+        unsafe { igTextColored(col, cstr_ptr!("%s"), fmt.as_ptr()) };
     }
     #[inline]
-    pub fn text_disabled(&self, fmtstr: &CStr) {
-        unsafe { igTextDisabled(cstr_ptr!("%s"), fmtstr.as_ptr()) };
+    pub fn text_disabled<'a, 'b>(&'a self, fmt: &'b CStr) {
+        unsafe { igTextDisabled(cstr_ptr!("%s"), fmt.as_ptr()) };
     }
     #[inline]
-    pub fn text_unformatted(&self, text: &CStr, text_end: &CStr) {
-        unsafe { igTextUnformatted(text.as_ptr(), text_end.as_ptr()) };
+    pub fn text_unformatted<'a, 'b, 'c>(&'a self, text: &'b CStr, text_end: impl Into<Option<&'c CStr>>) {
+        unsafe {
+            igTextUnformatted(
+                text.as_ptr(),
+                match text_end.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+            )
+        };
     }
     #[inline]
-    pub fn text_wrapped(&self, fmtstr: &CStr) {
-        unsafe { igTextWrapped(cstr_ptr!("%s"), fmtstr.as_ptr()) };
+    pub fn text_wrapped<'a, 'b>(&'a self, fmt: &'b CStr) {
+        unsafe { igTextWrapped(cstr_ptr!("%s"), fmt.as_ptr()) };
     }
     #[inline]
-    pub fn tree_advance_to_label_pos(&self) {
+    pub fn tree_advance_to_label_pos<'a>(&'a self) {
         unsafe { igTreeAdvanceToLabelPos() };
     }
     #[inline]
-    pub fn tree_node_str(&self, label: &CStr) -> bool {
+    pub fn tree_node_str<'a, 'b>(&'a self, label: &'b CStr) -> bool {
         unsafe { igTreeNodeStr(label.as_ptr()) }
     }
     #[inline]
-    pub fn tree_node_str_str(&self, str_id: &CStr, fmtstr: &CStr) -> bool {
-        unsafe { igTreeNodeStrStr(str_id.as_ptr(), cstr_ptr!("%s"), fmtstr.as_ptr()) }
+    pub fn tree_node_str_str<'a, 'b, 'c>(&'a self, str_id: &'b CStr, fmt: &'c CStr) -> bool {
+        unsafe { igTreeNodeStrStr(str_id.as_ptr(), cstr_ptr!("%s"), fmt.as_ptr()) }
     }
     // pub fn tree_node_ptr : (*const c_void, *const c_char, ) -> bool
     #[inline]
-    pub fn tree_node_ex_str(&self, label: &CStr, flags: ImGuiTreeNodeFlags) -> bool {
-        unsafe { igTreeNodeExStr(label.as_ptr(), flags) }
+    pub fn tree_node_ex_str<'a, 'b>(&'a self, label: &'b CStr, flags: impl Into<Option<ImGuiTreeNodeFlags>>) -> bool {
+        unsafe {
+            igTreeNodeExStr(
+                label.as_ptr(),
+                match flags.into() {
+                    Some(v) => v,
+                    None => ImGuiTreeNodeFlags::empty(),
+                },
+            )
+        }
     }
     #[inline]
-    pub fn tree_node_ex_str_str(&self, str_id: &CStr, flags: ImGuiTreeNodeFlags, fmtstr: &CStr) -> bool {
-        unsafe { igTreeNodeExStrStr(str_id.as_ptr(), flags, cstr_ptr!("%s"), fmtstr.as_ptr()) }
+    pub fn tree_node_ex_str_str<'a, 'b, 'c>(
+        &'a self,
+        str_id: &'b CStr,
+        flags: ImGuiTreeNodeFlags,
+        fmt: &'c CStr,
+    ) -> bool {
+        unsafe { igTreeNodeExStrStr(str_id.as_ptr(), flags, cstr_ptr!("%s"), fmt.as_ptr()) }
     }
     // pub fn tree_node_ex_ptr : (*const c_void, ImGuiTreeNodeFlags, *const c_char, ) -> bool
     #[inline]
-    pub fn tree_pop(&self) {
+    pub fn tree_pop<'a>(&'a self) {
         unsafe { igTreePop() };
     }
     #[inline]
-    pub fn tree_push_str(&self, str_id: &CStr) {
+    pub fn tree_push_str<'a, 'b>(&'a self, str_id: &'b CStr) {
         unsafe { igTreePushStr(str_id.as_ptr()) };
     }
     // pub fn tree_push_ptr : (*const c_void) -> undefined
     #[inline]
-    pub fn unindent(&self, indent_w: f32) {
-        unsafe { igUnindent(indent_w) };
+    pub fn unindent<'a>(&'a self, indent_w: impl Into<Option<f32>>) {
+        unsafe {
+            igUnindent(match indent_w.into() {
+                Some(v) => v,
+                None => 0.0,
+            })
+        };
     }
     #[inline]
-    pub fn v_slider_float(
-        &self,
-        label: &CStr,
+    pub fn v_slider_float<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
         size: ImVec2,
-        v: &mut f32,
+        v: &'c mut f32,
         v_min: f32,
         v_max: f32,
-        format: &CStr,
-        power: f32,
+        format: impl Into<Option<&'d CStr>>,
+        power: impl Into<Option<f32>>,
     ) -> bool {
-        unsafe { igVSliderFloat(label.as_ptr(), size, v, v_min, v_max, format.as_ptr(), power) }
+        unsafe {
+            igVSliderFloat(
+                label.as_ptr(),
+                size,
+                v,
+                v_min,
+                v_max,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%.3f"),
+                },
+                match power.into() {
+                    Some(v) => v,
+                    None => 1.0,
+                },
+            )
+        }
     }
     #[inline]
-    pub fn v_slider_int(&self, label: &CStr, size: ImVec2, v: &mut i32, v_min: i32, v_max: i32, format: &CStr) -> bool {
-        unsafe { igVSliderInt(label.as_ptr(), size, v, v_min, v_max, format.as_ptr()) }
+    pub fn v_slider_int<'a, 'b, 'c, 'd>(
+        &'a self,
+        label: &'b CStr,
+        size: ImVec2,
+        v: &'c mut i32,
+        v_min: i32,
+        v_max: i32,
+        format: impl Into<Option<&'d CStr>>,
+    ) -> bool {
+        unsafe {
+            igVSliderInt(
+                label.as_ptr(),
+                size,
+                v,
+                v_min,
+                v_max,
+                match format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => cstr_ptr!("%d"),
+                },
+            )
+        }
     }
     // pub fn v_slider_scalar : (*const c_char, ImVec2, ImGuiDataType, *mut c_void, *const c_void, *const c_void, *const c_char, c_float) -> bool
     #[inline]
-    pub fn value_bool(&self, prefix: &CStr, b: bool) {
+    pub fn value_bool<'a, 'b>(&'a self, prefix: &'b CStr, b: bool) {
         unsafe { igValueBool(prefix.as_ptr(), b) };
     }
     #[inline]
-    pub fn value_int(&self, prefix: &CStr, v: i32) {
+    pub fn value_int<'a, 'b>(&'a self, prefix: &'b CStr, v: i32) {
         unsafe { igValueInt(prefix.as_ptr(), v) };
     }
     #[inline]
-    pub fn value_uint(&self, prefix: &CStr, v: u32) {
+    pub fn value_uint<'a, 'b>(&'a self, prefix: &'b CStr, v: u32) {
         unsafe { igValueUint(prefix.as_ptr(), v) };
     }
     #[inline]
-    pub fn value_float(&self, prefix: &CStr, v: f32, float_format: &CStr) {
-        unsafe { igValueFloat(prefix.as_ptr(), v, float_format.as_ptr()) };
+    pub fn value_float<'a, 'b, 'c>(&'a self, prefix: &'b CStr, v: f32, float_format: impl Into<Option<&'c CStr>>) {
+        unsafe {
+            igValueFloat(
+                prefix.as_ptr(),
+                v,
+                match float_format.into() {
+                    Some(v) => v.as_ptr(),
+                    None => ::std::ptr::null(),
+                },
+            )
+        };
     }
 } // impl ImGui
 pub mod types_used {

@@ -426,81 +426,69 @@ const safeRetTypeConv = {
 };
 
 const safeTypeMap = {
-  '*const ImVec2': '&ImVec2',
-  '*const c_char': '&CStr',
-  '*const c_float': '&f32',
-  '*mut [c_float; 2]': '&mut [f32; 2]',
-  '*mut [c_float; 3]': '&mut [f32; 3]',
-  '*mut [c_float; 4]': '&mut [f32; 4]',
-  '*mut [c_int; 2]': '&mut [i32; 2]',
-  '*mut [c_int; 3]': '&mut [i32; 3]',
-  '*mut [c_int; 4]': '&mut [i32; 4]',
-  '*mut bool': '&mut bool',
-  '*mut c_double': '&mut f64',
-  '*mut c_float': '&mut f32',
-  '*mut c_int': '&mut i32',
-  '*mut c_uint': '&mut u32',
-  '*mut size_t': '&mut usize',
-  'ImGuiCol': 'ImGuiCol',
-  'ImGuiColorEditFlags': 'ImGuiColorEditFlags',
-  'ImGuiComboFlags': 'ImGuiComboFlags',
-  'ImGuiCond': 'ImGuiCond',
-  'ImGuiDataType': 'ImGuiDataType',
-  'ImGuiDir': 'ImGuiDir',
-  'ImGuiDragDropFlags': 'ImGuiDragDropFlags',
-  'ImGuiFocusedFlags': 'ImGuiFocusedFlags',
-  'ImGuiHoveredFlags': 'ImGuiHoveredFlags',
-  'ImGuiID': 'ImGuiID',
-  'ImGuiInputTextCallback': 'ImGuiInputTextCallback',
-  'ImGuiInputTextFlags': 'ImGuiInputTextFlags',
-  'ImGuiKey': 'ImGuiKey',
-  'ImGuiMouseCursor': 'ImGuiMouseCursor',
-  'ImGuiSelectableFlags': 'ImGuiSelectableFlags',
-  'ImGuiSizeCallback': 'ImGuiSizeCallback',
-  'ImGuiStyleVar': 'ImGuiStyleVar',
-  'ImGuiTreeNodeFlags': 'ImGuiTreeNodeFlags',
-  'ImGuiWindowFlags': 'ImGuiWindowFlags',
-  'ImTextureID': 'ImTextureID',
-  'ImU32': 'u32',
-  'ImVec2': 'ImVec2',
-  'ImVec4': 'ImVec4',
-  'bool': 'bool',
-  'c_double': 'f64',
-  'c_float': 'f32',
-  'c_int': 'i32',
-  'c_uint': 'u32',
-  'size_t': 'usize',
+  '*const ImVec2': (g) => `&'${g.next()} ImVec2`,
+  '*const c_char': (g) => `&'${g.next()} CStr`,
+  '*const c_float': (g) => `&'${g.next()} f32`,
+  '*mut [c_float; 2]': (g) => `&'${g.next()} mut [f32; 2]`,
+  '*mut [c_float; 3]': (g) => `&'${g.next()} mut [f32; 3]`,
+  '*mut [c_float; 4]': (g) => `&'${g.next()} mut [f32; 4]`,
+  '*mut [c_int; 2]': (g) => `&'${g.next()} mut [i32; 2]`,
+  '*mut [c_int; 3]': (g) => `&'${g.next()} mut [i32; 3]`,
+  '*mut [c_int; 4]': (g) => `&'${g.next()} mut [i32; 4]`,
+  '*mut bool': (g) => `&'${g.next()} mut bool`,
+  '*mut c_double': (g) => `&'${g.next()} mut f64`,
+  '*mut c_float': (g) => `&'${g.next()} mut f32`,
+  '*mut c_int': (g) => `&'${g.next()} mut i32`,
+  '*mut c_uint': (g) => `&'${g.next()} mut u32`,
+  '*mut size_t': (g) => `&'${g.next()} mut usize`,
+  'ImGuiCol': () => 'ImGuiCol',
+  'ImGuiColorEditFlags': () => 'ImGuiColorEditFlags',
+  'ImGuiComboFlags': () => 'ImGuiComboFlags',
+  'ImGuiCond': () => 'ImGuiCond',
+  'ImGuiDataType': () => 'ImGuiDataType',
+  'ImGuiDir': () => 'ImGuiDir',
+  'ImGuiDragDropFlags': () => 'ImGuiDragDropFlags',
+  'ImGuiFocusedFlags': () => 'ImGuiFocusedFlags',
+  'ImGuiHoveredFlags': () => 'ImGuiHoveredFlags',
+  'ImGuiID': () => 'ImGuiID',
+  'ImGuiInputTextCallback': () => 'ImGuiInputTextCallback',
+  'ImGuiInputTextFlags': () => 'ImGuiInputTextFlags',
+  'ImGuiKey': () => 'ImGuiKey',
+  'ImGuiMouseCursor': () => 'ImGuiMouseCursor',
+  'ImGuiSelectableFlags': () => 'ImGuiSelectableFlags',
+  'ImGuiSizeCallback': () => 'ImGuiSizeCallback',
+  'ImGuiStyleVar': () => 'ImGuiStyleVar',
+  'ImGuiTreeNodeFlags': () => 'ImGuiTreeNodeFlags',
+  'ImGuiWindowFlags': () => 'ImGuiWindowFlags',
+  'ImTextureID': () => 'ImTextureID',
+  'ImU32': () => 'u32',
+  'ImVec2': () => 'ImVec2',
+  'ImVec4': () => 'ImVec4',
+  'bool': () => 'bool',
+  'c_double': () => 'f64',
+  'c_float': () => 'f32',
+  'c_int': () => 'i32',
+  'c_uint': () => 'u32',
+  'size_t': () => 'usize',
 };
 
 const safeRetTypeMap = {
   ...safeTypeMap,
-  '*const c_char': 'String',
+  '*const c_char': () => 'String',
 };
 
 const safeTemplate = `
 #[inline]
-pub fn {{ sname }}(&self
+pub fn {{ sname }}<{{ lifetimes }}>(&'a self
   {%- for a in args -%}
-    {%- if a.type -%}
-      {%- if a.name == "fmt" and not args[loop.index0+1].type -%}
-        , fmtstr: &CStr
-      {%- else -%}
-        , {{ a.name }}{% if a.stype %}: {% endif %}{{ a.stype -}}
-      {%- endif -%}
-    {%- endif -%}
+    , {{ a.name }}{% if a.stype %}: {% endif %}{{ a.stype -}}
   {% endfor -%}
 )
 {%- if sret %} -> {{ sret }}{% endif %} {
     {% set funccall %}
       {{- name }}(
         {%- for a in args -%}
-          {%- if a.type -%}
-            {%- if a.name == "fmt" and not args[loop.index0+1].type -%}
-              {%- if not loop.first %}, {% endif %}cstr_ptr!("%s"), fmtstr.as_ptr()
-            {%- else -%}
-              {%- if not loop.first %}, {% endif %}{{ a.aconv -}}
-            {%- endif -%}
-          {%- endif -%}
+          {%- if not loop.first %}, {% endif %}{{ a.aconv -}}
         {% endfor -%}
       )
     {%- endset -%}
@@ -508,8 +496,57 @@ pub fn {{ sname }}(&self
 }
 `;
 
+const defaultValueMap = {
+  '"%.0f deg"': t => 'cstr_ptr!("%.0f deg")',
+  '"%.3f"': t => 'cstr_ptr!("%.3f")',
+  '"%.6f"': t => 'cstr_ptr!("%.6f")',
+  '"%d"': t => 'cstr_ptr!("%d")',
+  '((void *)0)': t => _.startsWith(t, '*mut') ? '::std::ptr::null_mut()' : '::std::ptr::null()',
+  '+360.0f': t => '360.0',
+  '-1': t => '-1',
+  '-1.0f': t => '-1.0',
+  '-360.0f': t => '-360.0',
+  '0': t => _.endsWith(t, 'Flags') || t === 'ImGuiCond' ? `${t}::empty()` : '0',
+  '0.0f': t => '0.0',
+  '0.5f': t => '0.5',
+  '1': t => '1',
+  '1.0f': t => '1.0',
+  '100': t => '100',
+  'FLT_MAX': t => '::std::f32::MAX',
+  'ImVec2(-1,0)': t => 'ImVec2{x:-1.0,y:0.0}',
+  'ImVec2(0,0)': t => 'ImVec2{x:0.0,y:0.0}',
+  'ImVec2(1,1)': t => 'ImVec2{x:1.0,y:1.0}',
+  'ImVec4(0,0,0,0)': t => 'ImVec4{x:0.0,y:0.0,z:0.0,w:0.0}',
+  'ImVec4(1,1,1,1)': t => 'ImVec4{x:1.0,y:1.0,z:1.0,w:1.0}',
+  'false': t => 'false',
+  'sizeof(float)': t => '::std::mem::size_of::<f32>() as i32',
+  'true': t => 'true',
+};
+
 function indentMultilineString(indent, str) {
   return _.join(_.map(_.split(str, '\n'), li => `${indent}${li}`), '\n');
+}
+
+function convertVarargs(args) {
+  const n = args.length;
+  if (n >= 2 && args[n-1].type === undefined && args[n-2].name === 'fmt') {
+    args.splice(n-2, 2, {
+      ...args[n-2],
+      aconv: `cstr_ptr!("%s"), ${args[n-2].name}.as_ptr()`,
+    });
+  }
+  return args;
+}
+
+const lifetimeNames = 'abcdefghijklmnopqrstuvwxyz';
+
+class LifetimeGen {
+  constructor() {
+    this.i = 1;
+  }
+  next() {
+    return lifetimeNames[this.i++];
+  }
 }
 
 function generateSafe() {
@@ -542,23 +579,36 @@ function generateSafe() {
       const args = _.map(func.argsT, a => ({
         name: safeArgName(a.name),
         type: a.name === '...' ? undefined : mapType(a.type),
+        def: func.defaults[a.name],
       }));
       if (_.every(args, a => a.type === undefined || !!safeTypeMap[a.type]) && (!ret || !!safeRetTypeMap[ret])) {
+        const lifetimeGen = new LifetimeGen();
         const data = {
           name: rawName,
           sname: name,
           ret,
           retconv: safeRetTypeConv[ret] || defaultConv,
-          sret: safeRetTypeMap[ret],
-          args: _.map(args, a => ({
-            ...a,
-            stype: safeTypeMap[a.type],
-            aconv: (safeArgTypeConv[a.type] || defaultConv)(a.name),
+          sret: safeRetTypeMap[ret] ? safeRetTypeMap[ret]() : undefined,
+          args: convertVarargs(_.map(args, a => {
+            const stypef = safeTypeMap[a.type];
+            const stype = stypef ? (a.def !== undefined ? `impl Into<Option<${stypef(lifetimeGen)}>>` : stypef(lifetimeGen)) : undefined;
+            const convf = safeArgTypeConv[a.type] || defaultConv;
+            return {
+              ...a,
+              stype,
+              aconv: a.def ?
+                `match ${a.name}.into() { Some(v) => ${convf("v")}, None => ${defaultValueMap[a.def](a.type)} }` :
+                convf(a.name),
+            };
           })),
         };
+        data.lifetimes = _.join(_.map(_.range(lifetimeGen.i), i => `'${lifetimeNames[i]}`), ', ');
         for (const a of data.args) {
-          if (a.stype && a.stype[0] !== '&' && _.toUpper(a.stype[0]) === a.stype[0]) {
-            typesUsedInAPI[a.stype] = true;
+          const t = _.startsWith(a.stype, "impl Into<Option<") ?
+            a.stype.substring("impl Into<Option<".length, a.stype.length-2) :
+            a.stype;
+          if (t && t[0] !== '&' && _.toUpper(t[0]) === t[0]) {
+            typesUsedInAPI[t] = true;
           }
         }
         const result = nunjucks.renderString(safeTemplate, data);
