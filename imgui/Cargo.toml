@@ -1,6 +1,6 @@
 [package]
 name = "nsf-imgui"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["nsf <no.smile.face@gmail.com>"]
 edition = "2018"
 description = "Alternative (personal) imgui rust bindings"

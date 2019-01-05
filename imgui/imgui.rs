@@ -56,6 +56,6 @@ macro_rules! cstr {
         ::std::ffi::CStr::from_ptr(cstr_ptr!($s))
     );
     ($s:expr, $($arg:expr)*) => (
-        ::std::ffi::CStr::from_ptr(cstr_ptr!(format!(concat!($s, "\0"), $($arg)*)))
+        ::std::ffi::CStr::from_bytes_with_nul_unchecked(&format!(concat!($s, "\0"), $($arg)*).into_bytes())
     );
 }
