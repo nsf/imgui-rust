@@ -1,0 +1,19 @@
+[package]
+name = "nsf-imgui"
+version = "0.0.1"
+authors = ["nsf <no.smile.face@gmail.com>"]
+edition = "2018"
+
+[profile.release]
+lto = true
+codegen-units = 1
+
+[profile.dev]
+opt-level = 2
+
+[lib]
+path = "imgui.rs"
+
+[dependencies]
+nsf-imgui-raw = { path = "../imgui-raw", version = "0.0.1" }
+lazy_static = "1.2.0"

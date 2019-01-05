@@ -1,0 +1,22 @@
+[package]
+name = "nsf-imgui-raw"
+version = "0.0.1"
+authors = ["nsf <no.smile.face@gmail.com>"]
+edition = "2018"
+
+[profile.release]
+lto = true
+codegen-units = 1
+
+[profile.dev]
+opt-level = 2
+
+[lib]
+path = "imguiraw.rs"
+
+[dependencies]
+bitflags = "1.0.4"
+libc = "0.2.45"
+
+[build-dependencies]
+cc = "1.0"
