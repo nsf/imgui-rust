@@ -63,6 +63,16 @@ const typeMap = {
   'size_t': 'size_t',
 }
 
+const snakeCaseManualCases = {
+  'ColorConvertRGBtoHSV': 'color_convert_rgb_to_hsv',
+  'ColorConvertHSVtoRGB': 'color_convert_hsv_to_rgb',
+}
+
+function snakeCase(s) {
+  const v = snakeCaseManualCases[s];
+  return v || changeCase.snakeCase(s);
+}
+
 function addKnownTypes() {
   const alreadyAdded = [];
   const addFrom = (collection, name) => {
@@ -343,7 +353,7 @@ function generateStructs() {
       simple: !!simpleStructs[name],
       fields: _.map(fields, f => ({
         type: mapType(f.type, { arity: extractArity(f.name) }),
-        name: changeCase.snakeCase(stripArity(f.name)),
+        name: snakeCase(stripArity(f.name)),
       })),
     });
     console.log(result);
@@ -409,12 +419,13 @@ function generateFuncs() {
 //=========================================================================================
 
 const blacklistedSafeFuncs = {
-  'igCreateContext': true,
-  'igDestroyContext': true,
-  'igMemAlloc': true,
-  'igMemFree': true,
-  'igSetAllocatorFunctions': true,
-  'igSetCurrentContext': true,
+  'igCreateContext': true, // calls to it are made by ImGui object
+  'igDestroyContext': true, // calls to it are made by ImGui object
+  'igMemAlloc': true, // raw memory
+  'igMemFree': true, // raw memory
+  'igSetAllocatorFunctions': true, // use unsafe interface if you want to override those
+  'igSetCurrentContext': true, // currently we assume only one context per lib usage
+  'igTextUnformatted': true, // has "end" pointer, TODO: we could make &str interface for it
 }
 
 const safeArgTypeConv = {
@@ -574,7 +585,7 @@ function generateSafe() {
         continue;
       }
 
-      const name = changeCase.snakeCase(rawName.substr(2)); // remove 'ig' prefix and convert_to_snake_case
+      const name = snakeCase(rawName.substr(2)); // remove 'ig' prefix and convert_to_snake_case
       const ret = func.ret && func.ret !== 'void' ? mapType(func.ret) : undefined;
       const args = _.map(func.argsT, a => ({
         name: safeArgName(a.name),

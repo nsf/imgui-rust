@@ -37,6 +37,17 @@ A: It depends. Currently I'm using it in my personal hobby gamedevy project. As 
 
 ## Changelog
 
+### nsf-imgui
+
+* **0.1.3**
+  - Implement `input_text` using `String`.
+  - Fix `cstr!` macro again, now for sure.
+  - Fix snake case conversion on `color_convert_hsv_to_rgb` and `color_convert_rgb_to_hsv` functions.
+  - Blacklist `igTextUnformatted`.
 * **0.1.2** Implement default function values using `impl Into<Option<>>` generic parameters.
 * **0.1.1** Fix `cstr!` macro variant with arguments.
+* **0.1.0** Initial release.
+
+### nsf-imgui-raw
+
 * **0.1.0** Initial release.

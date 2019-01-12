@@ -1,13 +1,12 @@
 [package]
 name = "nsf-imgui"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["nsf <no.smile.face@gmail.com>"]
 edition = "2018"
 description = "Alternative (personal) imgui rust bindings"
 repository = "https://github.com/nsf/imgui-rust"
 categories = ["gui", "api-bindings"]
 license = "MIT"
-maintenance = { status = "experimental" }
 keywords = ["imgui"]
 
 [profile.release]

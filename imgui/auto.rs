@@ -411,7 +411,7 @@ impl ImGui {
         unsafe { igColorConvertFloat4ToU32(_in) }
     }
     #[inline]
-    pub fn color_convert_hs_vto_rgb<'a, 'b, 'c, 'd>(
+    pub fn color_convert_hsv_to_rgb<'a, 'b, 'c, 'd>(
         &'a self,
         h: f32,
         s: f32,
@@ -423,7 +423,7 @@ impl ImGui {
         unsafe { igColorConvertHSVtoRGB(h, s, v, out_r, out_g, out_b) };
     }
     #[inline]
-    pub fn color_convert_rg_bto_hsv<'a, 'b, 'c, 'd>(
+    pub fn color_convert_rgb_to_hsv<'a, 'b, 'c, 'd>(
         &'a self,
         r: f32,
         g: f32,
@@ -2792,18 +2792,6 @@ impl ImGui {
     #[inline]
     pub fn text_disabled<'a, 'b>(&'a self, fmt: &'b CStr) {
         unsafe { igTextDisabled(cstr_ptr!("%s"), fmt.as_ptr()) };
-    }
-    #[inline]
-    pub fn text_unformatted<'a, 'b, 'c>(&'a self, text: &'b CStr, text_end: impl Into<Option<&'c CStr>>) {
-        unsafe {
-            igTextUnformatted(
-                text.as_ptr(),
-                match text_end.into() {
-                    Some(v) => v.as_ptr(),
-                    None => ::std::ptr::null(),
-                },
-            )
-        };
     }
     #[inline]
     pub fn text_wrapped<'a, 'b>(&'a self, fmt: &'b CStr) {
